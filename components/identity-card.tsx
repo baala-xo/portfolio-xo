@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card"
 import { MapPin, Mail, Globe, FileText, Cake } from "lucide-react"
 import Image from "next/image"
 import { Github, Twitter, Linkedin } from "lucide-react"
-import { DiscordStatus } from "./status"
+import { DiscordStatus } from "./Status"
 
 export function IdentityCard() {
   const [isHovered, setIsHovered] = useState(false)
