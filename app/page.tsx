@@ -5,8 +5,16 @@ import { SkillsSection } from "@/components/skills-section"
 import { Footer } from "@/components/footer"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { AboutSection } from "@/components/about-section"
+import { Hind_Madurai } from 'next/font/google';
+
+const hindMadurai = Hind_Madurai({
+  subsets: ['tamil'], // Important: Includes the Tamil characters
+  weight: ['400', '700'] // Specify weights you want to use, e.g., regular (400) and bold (700)
+});
 
 export default function Portfolio() {
+ 
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -20,7 +28,10 @@ export default function Portfolio() {
                 <h1 className="text-5xl md:text-6xl font-bold leading-tight hidden md:block">Hi, Balachandar here</h1>
                 <p className="text-xl text-muted-foreground hidden md:block">{"//"}</p>
                 {/* Visible on mobile screens */}
-                <h1 className="text-4xl font-bold leading-tight block md:hidden">Balachandar V</h1>
+                <h1 className="text-4xl font-bold leading-tight block md:hidden">Hello :)</h1>
+                <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>
+  {"வணக்கம்"}
+</p>
                 <p className="text-lg text-muted-foreground block md:hidden">{"//"}</p>
               </div>
             </div>

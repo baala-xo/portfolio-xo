@@ -4,46 +4,24 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Card } from "@/components/ui/card"
-import { MapPin, Mail, Globe, FileText, Cake } from "lucide-react" // Added Cake icon
+import { MapPin, Mail, Globe, FileText, Cake } from "lucide-react"
 import Image from "next/image"
-import { Github, Twitter, Linkedin } from "lucide-react" // Import social icons
+import { Github, Twitter, Linkedin } from "lucide-react"
+import { DiscordStatus } from "./status"
 
 export function IdentityCard() {
   const [isHovered, setIsHovered] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const cardRef = useRef<HTMLDivElement>(null)
-  const [isMobile, setIsMobile] = useState(false)
-  const [mobileGlowActive, setMobileGlowActive] = useState(false)
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-    if (isMobile) {
-      interval = setInterval(() => {
-        setMobileGlowActive(true)
-        setTimeout(() => {
-          setMobileGlowActive(false)
-        }, 5000) // Glow for 5 seconds
-      }, 10000) // Loop every 10 seconds
-    } else if (interval) {
-      clearInterval(interval)
-      setMobileGlowActive(false)
-    }
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isMobile])
+  // This is the only logic we are removing:
+  // - The check for mobile screen size.
+  // - The separate state for the mobile glow (`mobileGlowActive`).
+  // - The `useEffect` that created the looping glow animation on mobile.
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || isMobile) return // Disable hover effect on mobile
+    // The `isMobile` check is removed from here to allow the effect on all screens.
+    if (!cardRef.current) return
 
     const rect = cardRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -62,7 +40,8 @@ export function IdentityCard() {
 
   const handleMouseLeave = () => {
     setIsHovered(false)
-    if (cardRef.current && !isMobile) {
+    // The `isMobile` check is removed from here.
+    if (cardRef.current) {
       cardRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)"
     }
   }
@@ -71,66 +50,50 @@ export function IdentityCard() {
     <div className="relative">
       <Card
         ref={cardRef}
+        // The className logic is now simplified to only depend on `isHovered`.
         className={`w-80 h-96 p-6 bg-gradient-to-br from-background via-background to-muted/50 border-2 backdrop-blur-sm transition-all duration-500 ease-out cursor-pointer relative overflow-hidden ${
-          (isHovered && !isMobile) || mobileGlowActive ? "identity-card-glow" : "border-border/50"
-        } ${isMobile ? "mobile-id-card-animation" : ""}`}
+          isHovered ? "identity-card-glow" : "border-border/50"
+        }`}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        // The `isMobile` check is removed from here.
+        onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
       >
         {/* Animated background gradient */}
         <div
           className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none"
+          // This style logic is also simplified to only depend on `isHovered`.
           style={{
-            background:
-              (isHovered && !isMobile) || mobileGlowActive
-                ? `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(138, 43, 226, 0.1) 0%, transparent 50%)`
-                : "none",
-            opacity: (isHovered && !isMobile) || mobileGlowActive ? 1 : 0,
+            background: isHovered
+              ? `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(138, 43, 226, 0.1) 0%, transparent 50%)`
+              : "none",
+            opacity: isHovered ? 1 : 0,
           }}
         />
 
-        {/* Card content */}
+        {/* Card content remains the same */}
         <div className="relative z-10 h-full flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="w-20 h-20 rounded-full overflow-hidden bg-muted">
               <Image
-                src="/bala.jpeg" // Placeholder: Add your profile photo here (e.g., /profile-photo.jpg)
+                src="/bala.jpeg"
                 alt="Balachandar V"
-                width={48}
-                height={48}
+                width={80}
+                height={80}
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Social Links in top right corner */}
+            {/* Social Links */}
             <div className="flex items-center gap-3">
-              <a
-                href="https://github.com/baala-xo" // Placeholder: Add your GitHub link here
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="GitHub"
-              >
-                <Github className="w-4 h-4" /> {/* Reduced size */}
+              <a href="https://github.com/baala-xo" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="GitHub">
+                <Github className="w-4 h-4" />
               </a>
-              <a
-                href="https://x.com/ba1a_xo" // Placeholder: Add your Twitter link here
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-4 h-4" /> {/* Reduced size */}
+              <a href="https://x.com/ba1a_xo" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Twitter">
+                <Twitter className="w-4 h-4" />
               </a>
-              <a
-                href="https://www.linkedin.com/in/bala-xo/" // Placeholder: Add your LinkedIn link here
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-4 h-4" /> {/* Reduced size */}
+              <a href="https://www.linkedin.com/in/bala-xo/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="LinkedIn">
+                <Linkedin className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -151,31 +114,22 @@ export function IdentityCard() {
               <MapPin className="w-4 h-4 text-muted-foreground" />
               <span className="text-muted-foreground">Erode, India</span>
             </div>
-            
-            {/* Age */}
             <div className="flex items-center gap-3 text-sm">
               <Cake className="w-4 h-4 text-muted-foreground" />
               <span className="text-muted-foreground">22 years old</span>
             </div>
-            {/* Resume Link */}
             <div className="flex items-center gap-3 text-sm">
               <FileText className="w-4 h-4 text-muted-foreground" />
-              <a
-                href="https://drive.google.com/file/d/12860tAGwngghkNMEoOjVq3bf5joYHKSO/view?usp=drive_link" // Placeholder: Add your Google Drive link for resume
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
+              <a href="https://drive.google.com/file/d/12860tAGwngghkNMEoOjVq3bf5joYHKSO/view?usp=drive_link" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 Resume
               </a>
             </div>
+          <div className="flex items-center gap-2 pr-4">
+            <DiscordStatus />
+          </div>
           </div>
 
           {/* Status */}
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-muted-foreground">Available for opportunities</span>
-          </div>
         </div>
       </Card>
     </div>
