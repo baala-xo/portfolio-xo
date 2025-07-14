@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 
-const skills = ["React", "Next.js", "Vercel", "Git", "GitHub", "Supabase"]
+const skills = [ "Next.js","Supabase", "React","Vercel", "GitHub" ]
 
 export function SkillsSection() {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)

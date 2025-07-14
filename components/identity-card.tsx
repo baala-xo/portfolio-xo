@@ -8,6 +8,7 @@ import { MapPin, Mail, Globe, FileText, Cake } from "lucide-react"
 import Image from "next/image"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { DiscordStatus } from "./Status"
+import { FaXTwitter } from "react-icons/fa6"
 
 export function IdentityCard() {
   const [isHovered, setIsHovered] = useState(false)
@@ -90,7 +91,7 @@ export function IdentityCard() {
                 <Github className="w-4 h-4" />
               </a>
               <a href="https://x.com/ba1a_xo" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Twitter">
-                <Twitter className="w-4 h-4" />
+                <FaXTwitter className="w-4 h-4" />
               </a>
               <a href="https://www.linkedin.com/in/bala-xo/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="LinkedIn">
                 <Linkedin className="w-4 h-4" />
