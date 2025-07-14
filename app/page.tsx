@@ -25,7 +25,8 @@ export default function Portfolio() {
             <div className="space-y-8">
               <div className="space-y-4">
                 {/* Hidden on mobile screens */}
-                <h1 className="text-5xl md:text-6xl font-bold leading-tight hidden md:block">Hi, Balachandar here</h1>
+                <h1 className="text-5xl md:text-6xl font-bold leading-tight hidden md:block">Hello :)</h1>
+                <p className={`${hindMadurai.className} text-xl text-muted-foreground hidden md:block`}>{"வணக்கம்"}</p>
                 <p className="text-xl text-muted-foreground hidden md:block">{"//"}</p>
                 {/* Visible on mobile screens */}
                 <h1 className="text-4xl font-bold leading-tight block md:hidden">Hello :)</h1>
