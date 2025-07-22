@@ -8,8 +8,12 @@ export function AboutSection() {
       <div className="space-y-4 text-muted-foreground leading-relaxed">
         <p>tldr; learnt by building stuff on the internet.</p>
         <p>I deeply study web development, currently focusing on LLM integrations into web-apps.</p>
-        <p>Graduated with Master's in Information Technology [M.Sc IT].</p>
-        <p>I love technology, gemini 2.5 pro and my family.</p>
+        <p>
+          I’ve built and deployed several personal projects using modern frameworks like Next.js, Node.js, Tailwind, and FastAPI. 
+          My recent experiments involve AI/ML, prompt engineering.
+        </p>
+        <p>I hold a Master’s degree in Information Technology (M.Sc IT).</p>
+        <p>I love technology, gemini 2.5 pro and my family 💜.</p>
         <div>
           In my leisure time, I enjoy scrolling on Instagram and X, listening to music, and playing{" "}
           {/* Mobile: Show as link */}

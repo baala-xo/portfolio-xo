@@ -121,7 +121,7 @@ export function IdentityCard() {
             </div>
             <div className="flex items-center gap-3 text-sm">
               <FileText className="w-4 h-4 text-muted-foreground" />
-              <a href="https://drive.google.com/file/d/12860tAGwngghkNMEoOjVq3bf5joYHKSO/view?usp=drive_link" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://drive.google.com/file/d/1wztFHcbM57sWQgj-jiqoKA-h7-YiyuNu/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 Resume
               </a>
             </div>

@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { Home, FolderOpen, GraduationCap, User, Github, Twitter, Linkedin, Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { FaXTwitter } from "react-icons/fa6";
 
 const navItems = [
   { href: "#home", label: "Home", icon: Home },
@@ -14,7 +13,7 @@ const navItems = [
 
 const socialLinks = [
   { href: "https://github.com/baala-xo", icon: Github, label: "GitHub" },
-  { href: "https://x.com/ba1a_xo", icon: FaXTwitter, label: "Twitter" },
+  { href: "https://x.com/ba1a_xo", icon: Twitter, label: "Twitter" },
   { href: "https://www.linkedin.com/in/bala-xo/", icon: Linkedin, label: "LinkedIn" },
 ]
 
@@ -215,15 +214,15 @@ export function BottomNavigation() {
 
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-        <div className="relative bg-black/20 backdrop-blur-xl border-t border-gray-800/50 shadow-xl">
-          {/* Subtle overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 via-gray-800/20 to-gray-700/10" />
+        <div className="relative bg-neutral-900/95 backdrop-blur-xl border-t border-neutral-800/80 shadow-2xl">
+          {/* Subtle overlay matching the card design */}
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/20 via-neutral-800/10 to-neutral-700/5" />
 
           {/* Mobile Menu Button */}
           <div className="relative flex justify-center items-center p-3">
             <motion.button
               onClick={toggleMenu}
-              className="relative p-2.5 rounded-xl bg-gray-800/30 backdrop-blur-lg border border-gray-700/50 text-gray-300 shadow-lg"
+              className="relative p-2.5 rounded-xl bg-neutral-800/50 backdrop-blur-lg border border-neutral-700/60 text-neutral-300 shadow-lg hover:bg-neutral-800/70 hover:border-neutral-600/70 transition-all duration-200"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               whileTap={{
                 scale: 0.95,
@@ -234,7 +233,7 @@ export function BottomNavigation() {
                 transition: { type: "spring", stiffness: 400, damping: 15 },
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-700/20 to-gray-800/10 rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-neutral-700/20 to-neutral-800/10 rounded-xl" />
               <motion.div
                 animate={{ rotate: menuOpen ? 180 : 0 }}
                 transition={{
@@ -261,7 +260,7 @@ export function BottomNavigation() {
                 }}
                 className="overflow-hidden relative"
               >
-                <div className="absolute inset-0 bg-gray-900/10 backdrop-blur-lg" />
+                <div className="absolute inset-0 bg-neutral-900/10 backdrop-blur-lg" />
 
                 <div className="relative grid grid-cols-2 gap-2.5 p-4">
                   {navItems.map((item, index) => {
@@ -273,8 +272,8 @@ export function BottomNavigation() {
                         onClick={() => scrollToSection(item.href)}
                         className={`relative flex items-center justify-center space-x-2.5 p-3 rounded-xl transition-all duration-200 ${
                           isActive
-                            ? "bg-gray-800/40 backdrop-blur-lg border border-gray-700/50 text-white shadow-lg"
-                            : "bg-gray-800/20 backdrop-blur-lg border border-gray-700/30 text-gray-400 hover:text-gray-200 hover:bg-gray-800/30"
+                            ? "bg-neutral-800/60 backdrop-blur-lg border border-neutral-700/70 text-neutral-100 shadow-lg"
+                            : "bg-neutral-800/30 backdrop-blur-lg border border-neutral-700/50 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50 hover:border-neutral-600/60"
                         }`}
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -293,12 +292,12 @@ export function BottomNavigation() {
                           transition: { type: "spring", stiffness: 400, damping: 15 },
                         }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-700/10 to-gray-800/5 rounded-xl" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-neutral-700/10 to-neutral-800/5 rounded-xl" />
                         <Icon className="w-4 h-4 relative z-10" />
                         <span className="text-sm font-medium relative z-10">{item.label}</span>
                         {isActive && (
                           <motion.div
-                            className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-white rounded-full shadow-lg"
+                            className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-neutral-100 rounded-full shadow-lg"
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{
@@ -316,12 +315,12 @@ export function BottomNavigation() {
 
                 {/* Mobile Social Links */}
                 <motion.div
-                  className="relative flex justify-center space-x-4 p-4 border-t border-gray-800/50"
+                  className="relative flex justify-center space-x-4 p-4 border-t border-neutral-800/60"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.4 }}
                 >
-                  <div className="absolute inset-0 bg-gray-900/5 backdrop-blur-lg" />
+                  <div className="absolute inset-0 bg-neutral-900/5 backdrop-blur-lg" />
                   {socialLinks.map((social, index) => {
                     const Icon = social.icon
                     return (
@@ -330,7 +329,7 @@ export function BottomNavigation() {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="relative text-gray-400 hover:text-gray-200 transition-colors duration-200 p-2.5 rounded-xl bg-gray-800/20 backdrop-blur-lg border border-gray-700/30 hover:bg-gray-800/30"
+                        className="relative text-neutral-400 hover:text-neutral-200 transition-colors duration-200 p-2.5 rounded-xl bg-neutral-800/30 backdrop-blur-lg border border-neutral-700/50 hover:bg-neutral-800/50 hover:border-neutral-600/60"
                         aria-label={social.label}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -350,7 +349,7 @@ export function BottomNavigation() {
                           transition: { type: "spring", stiffness: 400, damping: 15 },
                         }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-700/20 to-gray-800/5 rounded-xl" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-neutral-700/20 to-neutral-800/5 rounded-xl" />
                         <Icon className="w-4 h-4 relative z-10" />
                       </motion.a>
                     )
@@ -373,7 +372,7 @@ export function BottomNavigation() {
                 damping: 25,
               }}
             >
-              <div className="absolute inset-0 bg-gray-900/5 backdrop-blur-lg" />
+              <div className="absolute inset-0 bg-neutral-900/5 backdrop-blur-lg" />
               {navItems.slice(0, 4).map((item, index) => {
                 const Icon = item.icon
                 const isActive = activeSection === item.href.substring(1)
@@ -382,7 +381,7 @@ export function BottomNavigation() {
                     key={item.href}
                     onClick={() => scrollToSection(item.href)}
                     className={`relative p-3 rounded-xl transition-all duration-200 ${
-                      isActive ? "text-white" : "text-gray-400"
+                      isActive ? "text-neutral-100" : "text-neutral-400 hover:text-neutral-200"
                     }`}
                     aria-label={item.label}
                     initial={{ opacity: 0, y: 10 }}
@@ -401,7 +400,7 @@ export function BottomNavigation() {
                     <Icon className="w-4 h-4 relative z-10" />
                     {isActive && (
                       <motion.div
-                        className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full shadow-lg"
+                        className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-neutral-100 rounded-full shadow-lg"
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{
