@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { AboutSection } from "@/components/about-section"
 import { Hind_Madurai } from 'next/font/google';
+import DigitalGuestbook from "@/digital-guestbook"
 
 const hindMadurai = Hind_Madurai({
   subsets: ['tamil'], // Important: Includes the Tamil characters
@@ -24,11 +25,11 @@ export default function Portfolio() {
               <div className="space-y-4">
                 {/* Hidden on mobile screens */}
                 <h1 className="text-5xl md:text-6xl font-bold leading-tight hidden md:block">Hello :)</h1>
-                <p className={`${hindMadurai.className} text-xl text-muted-foreground hidden md:block`}>{"வணக்கம்"}</p>
+                <p className={`${hindMadurai.className} text-xl text-muted-foreground hidden md:block`}>{"வணக்கம் 💜"}</p>
                 <p className="text-xl text-muted-foreground hidden md:block">{"//"}</p>
                 {/* Visible on mobile screens */}
                 <h1 className="text-4xl font-bold leading-tight block md:hidden">Hello :)</h1>
-                <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>  {"வணக்கம்"}</p>
+                <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>  {"வணக்கம் 💜"}</p>
                 <p className="text-lg text-muted-foreground block md:hidden">{"//"}</p>
               </div>
             </div>
@@ -99,6 +100,7 @@ export default function Portfolio() {
         </section>
         
         <EducationSection />
+        <DigitalGuestbook />
       </div>
       
       <Footer />
