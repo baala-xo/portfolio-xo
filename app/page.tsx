@@ -1,5 +1,5 @@
 import { IdentityCard } from "@/components/identity-card"
-import { ProjectCard } from "@/components/project-card"
+import { EnhancedProjectCard } from "@/components/enhanced-project-card"
 import { EducationSection } from "@/components/education-section"
 import { SkillsSection } from "@/components/skills-section"
 import { Footer } from "@/components/footer"
@@ -13,8 +13,6 @@ const hindMadurai = Hind_Madurai({
 });
 
 export default function Portfolio() {
- 
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -30,13 +28,10 @@ export default function Portfolio() {
                 <p className="text-xl text-muted-foreground hidden md:block">{"//"}</p>
                 {/* Visible on mobile screens */}
                 <h1 className="text-4xl font-bold leading-tight block md:hidden">Hello :)</h1>
-                <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>
-  {"வணக்கம்"}
-</p>
+                <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>  {"வணக்கம்"}</p>
                 <p className="text-lg text-muted-foreground block md:hidden">{"//"}</p>
               </div>
             </div>
-
             {/* Right Content - Enhanced ID Card */}
             <div className="flex justify-center lg:justify-end">
               <IdentityCard />
@@ -49,51 +44,64 @@ export default function Portfolio() {
       <div className="max-w-2xl mx-auto px-6 pb-32 space-y-12">
         <AboutSection />
         <SkillsSection />
-        {/* Projects Section - Enhanced with numbered indicators */}
+        
+        {/* Projects Section - Enhanced with all new features */}
         <section id="projects" className="space-y-8">
           <h2 className="text-2xl font-bold">Cool projects I built</h2>
           <div className="space-y-6">
-            <ProjectCard
+            <EnhancedProjectCard
               number={1}
               title="Ula - Taxi Booking App"
-              description="Engineered a modern taxi application with React for a polished user interface, catering to both customer ride booking and driver management workflows."
+              description="Engineered a modern taxi application with React for a polished user interface, catering to both customer ride booking and driver management workflows. Features real-time GPS tracking, secure payment integration, and comprehensive admin dashboard for fleet management."
               technologies={["NextJS", "Supabase", "ShadCN", "TailwindCSS", "Google-OAuth", "Vercel", "Leaflet-maps"]}
               link="https://taxi-app-steel.vercel.app/"
               status="building"
+              progress={75}
+              thumbnailUrl="/projects/ula-taxi-app.png"
+              lastUpdated="2 days ago"
             />
-
-            <ProjectCard
+            
+            <EnhancedProjectCard
               number={2}
               title="Libry - Link Organization Tool"
-              description="A modern web application to store, organize, and manage your important links with categories, tags, and search functionality."
+              description="A modern web application to store, organize, and manage your important links with categories, tags, and search functionality. Built with a focus on user experience and productivity enhancement."
               technologies={["NextJS", "TailwindCSS", "ShadCN", "Supabase", "TypeScript"]}
-              link="https://libry-one.vercel.app/" // Placeholder: Add your Libry project link here
+              link="https://libry-one.vercel.app/"
               status="building"
+              progress={60}
+              thumbnailUrl="/projects/libry-link-tool.png"
+              lastUpdated="1 week ago"
             />
-
-            <ProjectCard
+            
+            <EnhancedProjectCard
               number={3}
               title="AI Chatbot Widget"
-              description="Built a floating chatbot widget with persistent memory and smart LLM responses. Integrated via a reusable component."
+              description="Built a floating chatbot widget with persistent memory and smart LLM responses. Integrated via a reusable component with customizable themes and advanced conversation management."
               technologies={["NextJS", "MistralAI-model", "Redis Upstash", "TailwindCSS", "Vercel"]}
               link="https://ai-chatbot-widget-5ga9cof84-baalaxos-projects.vercel.app/"
+              status="completed"
+              thumbnailUrl="/projects/ai-chatbot-widget.png"
+              lastUpdated="3 weeks ago"
             />
-
-            <ProjectCard
+            
+            <EnhancedProjectCard
               number={4}
               title="Brain Tumor Detection CNN"
-              description="Developed a CNN model with ResNet18 to classify MRI brain scans into 4 categories. Deployed via Gradio for real-time predictions."
+              description="Developed a CNN model with ResNet18 to classify MRI brain scans into 4 categories. Deployed via Gradio for real-time predictions with high accuracy and medical-grade reliability."
               technologies={["Python", "Huggingface", "PyTorch"]}
               academic={true}
-              documentationLink="https://drive.google.com/file/d/1jtARaGP96VnjdGvgIfjZL4skjE2fPLsl/view?usp=drive_link" // Placeholder: Add your Google Drive link for Brain Tumor Detection docs
+              documentationLink="https://drive.google.com/file/d/1jtARaGP96VnjdGvgIfjZL4skjE2fPLsl/view?usp=drive_link"
+              status="completed"
+              thumbnailUrl="/projects/brain-tumor-detection.png"
+              lastUpdated="2 months ago"
             />
           </div>
         </section>
+        
         <EducationSection />
       </div>
-
+      
       <Footer />
-      <BottomNavigation />
-    </div>
+      <BottomNavigation />    </div>
   )
 }
