@@ -2,11 +2,11 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
-import { MapPin, Mail, Globe, FileText, Cake } from "lucide-react"
+import { MapPin, Mail, FileText, Cake } from "lucide-react"
 import Image from "next/image"
-import { Github, Twitter, Linkedin } from "lucide-react"
+import { Github, Linkedin } from "lucide-react"
 import { DiscordStatus } from "./Status"
 import { FaXTwitter } from "react-icons/fa6"
 
@@ -15,13 +15,9 @@ export function IdentityCard() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // This is the only logic we are removing:
-  // - The check for mobile screen size.
-  // - The separate state for the mobile glow (`mobileGlowActive`).
-  // - The `useEffect` that created the looping glow animation on mobile.
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // The `isMobile` check is removed from here to allow the effect on all screens.
+
     if (!cardRef.current) return
 
     const rect = cardRef.current.getBoundingClientRect()
@@ -51,8 +47,7 @@ export function IdentityCard() {
     <div className="relative">
       <Card
         ref={cardRef}
-        // The className logic is now simplified to only depend on `isHovered`.
-        className={`w-80 h-96 p-6 bg-gradient-to-br from-background via-background to-muted/50 border-2 backdrop-blur-sm transition-all duration-500 ease-out cursor-pointer relative overflow-hidden ${
+        className={`w-80 h-96 p-6 bg-gradient-to-br from-background via-background to-muted/50 border-2 backdrop-blur-sm transition-all duration-500 ease-out cursor-pointer relative ${
           isHovered ? "identity-card-glow" : "border-border/50"
         }`}
         onMouseMove={handleMouseMove}
@@ -87,13 +82,31 @@ export function IdentityCard() {
             </div>
             {/* Social Links */}
             <div className="flex items-center gap-3">
-              <a href="https://github.com/baala-xo" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="GitHub">
+              <a
+                href="https://github.com/baala-xo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="GitHub"
+              >
                 <Github className="w-4 h-4" />
               </a>
-              <a href="https://x.com/ba1a_xo" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Twitter">
+              <a
+                href="https://x.com/ba1a_xo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Twitter"
+              >
                 <FaXTwitter className="w-4 h-4" />
               </a>
-              <a href="https://www.linkedin.com/in/bala-xo/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="LinkedIn">
+              <a
+                href="https://www.linkedin.com/in/bala-xo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="LinkedIn"
+              >
                 <Linkedin className="w-4 h-4" />
               </a>
             </div>
@@ -121,13 +134,18 @@ export function IdentityCard() {
             </div>
             <div className="flex items-center gap-3 text-sm">
               <FileText className="w-4 h-4 text-muted-foreground" />
-              <a href="https://drive.google.com/file/d/1wztFHcbM57sWQgj-jiqoKA-h7-YiyuNu/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a
+                href="https://drive.google.com/file/d/1g-Rbl0jaxCaqNS5m4ixXucuO8Svdn3xe/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 Resume
               </a>
             </div>
-          <div className="flex items-center gap-2 pr-4">
-            <DiscordStatus />
-          </div>
+            <div className="flex items-center gap-2 pr-4">
+              <DiscordStatus />
+            </div>
           </div>
 
           {/* Status */}
