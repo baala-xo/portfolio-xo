@@ -126,7 +126,7 @@ export default function Portfolio() {
           <motion.h2 className="text-2xl font-bold" variants={smoothScrollFade}>
             Cool projects I built
           </motion.h2>
-          <motion.div className="space-y-6" variants={projectStagger}>
+          <motion.div className="space-y-6">
             <motion.div variants={smoothScrollFade}>
               <EnhancedProjectCard
                 number={1}

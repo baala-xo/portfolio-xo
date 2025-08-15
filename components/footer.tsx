@@ -1,3 +1,5 @@
+import { FaXTwitter } from "react-icons/fa6"
+
 export function Footer() {
   return (
     <footer className="py-20">
@@ -5,10 +7,11 @@ export function Footer() {
         <div className="w-12 h-0.5 bg-muted mx-auto" />
 
         <p className="text-muted-foreground">
-          say hello on{" "}
-          <a href="mailto:bala2003fd@gmail.com" className="text-primary hover:underline">
-            email
+          {" "} 
+          <a href="/" className="text-primary ">
+           Reload
           </a>
+           
         </p>
       </div>
     </footer>
