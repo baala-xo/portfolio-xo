@@ -8,14 +8,8 @@ const education = [
     period: "2023 - 2025",
     cgpa: "7.6",
     logo: "/hicas.png", // Placeholder: Add your Hindusthan College logo here (e.g., /hindusthan-logo.jpg)
-  },
-  {
-    institution: "Kaamadhenu Arts and Science College",
-    degree: "B.Sc. Information Technology",
-    period: "2020 - 2023",
-    cgpa: "7.4",
-    logo: "/kasc.png", // Placeholder: Add your Kaamadhenu College logo here (e.g., /kaamadhenu-logo.jpg)
-  },
+  }
+
 ]
 
 export function EducationSection() {
