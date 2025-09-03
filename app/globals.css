@@ -200,7 +200,8 @@ html {
 
 /* Better selection colors */
 ::selection {
-  @apply bg-primary/20 text-primary;
+  @apply bg-primary/20 text-black;
+  
 }
 
 /* Typography improvements */
