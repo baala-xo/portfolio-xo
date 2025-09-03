@@ -275,8 +275,8 @@ input:focus-visible {
 
 ::selection {
   background-color: #8A2BE2; /* Brinjal Violet */
-  color: #FFFFFF;             /* White text */
-  text-shadow: 0 0 5px #FFFFFF, 0 0 10px #8A2BE2; /* White and Violet Glow */
+  color: #000000;             /* White text */
+  text-shadow: 0 0 5px #000000, 0 0 10px #8A2BE2; /* White and Violet Glow */
 }
 
 /* app/globals.css */
