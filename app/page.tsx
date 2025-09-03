@@ -153,35 +153,7 @@ export default function Portfolio() {
                 lastUpdated="1 week ago"
               />
             </motion.div>
-            <motion.div variants={smoothScrollFade}>
-              <EnhancedProjectCard
-                number={2}
-                title="Ula - Taxi Booking App"
-                description="Engineered a modern taxi application with React for a polished user interface, catering to both customer ride booking and driver management workflows. Features real-time GPS tracking, secure payment integration, and comprehensive admin dashboard for fleet management."
-                technologies={["NextJS", "Supabase", "ShadCN", "TailwindCSS", "Google-OAuth", "Vercel", "Leaflet-maps"]}
-                link="https://taxi-app-steel.vercel.app/"
-                status="building"
-                progress={75}
-                thumbnailUrl="/projects/ula-taxi-app.png"
-                lastUpdated="a month ago"
-              />
-            </motion.div>
-
-            <motion.div variants={smoothScrollFade}>
-              <EnhancedProjectCard
-                number={3}
-                title="Libry - Link Organization Tool"
-                description="A modern web application to store, organize, and manage your important links with categories, tags, and search functionality. Built with a focus on user experience and productivity enhancement."
-                technologies={["NextJS", "TailwindCSS", "ShadCN", "Supabase", "TypeScript"]}
-                link="https://libry-one.vercel.app/"
-                status="building"
-                progress={60}
-                thumbnailUrl="/projects/libry-link-tool.png"
-                lastUpdated="a month ago"
-              />
-            </motion.div>
-
-            <motion.div variants={smoothScrollFade}>
+                        <motion.div variants={smoothScrollFade}>
               <EnhancedProjectCard
                 number={4}
                 title="AI Chatbot Widget"
