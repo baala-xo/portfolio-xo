@@ -114,7 +114,7 @@ export function IdentityCard() {
 
           {/* Name and title */}
           <div className="space-y-2 mb-6">
-            <h3 className="text-xl font-bold">Balachandar V</h3>
+            <h3 className="text-xl font-bold">Bala 🧃</h3>
             <p className="text-sm text-muted-foreground">Software Developer</p>
           </div>
 
@@ -131,17 +131,6 @@ export function IdentityCard() {
             <div className="flex items-center gap-3 text-sm">
               <Cake className="w-4 h-4 text-muted-foreground" />
               <span className="text-muted-foreground">22 years old</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm">
-              <FileText className="w-4 h-4 text-muted-foreground" />
-              <a
-                href="https://drive.google.com/file/d/1g-Rbl0jaxCaqNS5m4ixXucuO8Svdn3xe/view?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Resume
-              </a>
             </div>
             <div className="flex items-center gap-2 pr-4">
               <DiscordStatus />
