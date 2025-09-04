@@ -9,6 +9,8 @@ import Image from "next/image"
 import { Github, Linkedin } from "lucide-react"
 import { DiscordStatus } from "./Status"
 import { FaXTwitter } from "react-icons/fa6"
+import { FaInstagram } from 'react-icons/fa';
+
 
 export function IdentityCard() {
   const [isHovered, setIsHovered] = useState(false)
@@ -108,6 +110,15 @@ export function IdentityCard() {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.instagram.com/bala.abq/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4" />
               </a>
             </div>
           </div>
