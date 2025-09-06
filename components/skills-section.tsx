@@ -17,6 +17,7 @@ const skillsData = [
   
   // Tools & Services
   { name: "Supabase", category: "Tools & Services" },
+  { name: "Figma", category: "Tools & Services" },
   { name: "Vercel", category: "Tools & Services" },
   { name: "GitHub", category: "Tools & Services" },
   { name: "Convex", category: "Tools & Services" },
