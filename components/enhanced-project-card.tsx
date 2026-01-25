@@ -15,10 +15,10 @@ function useMediaQuery(query: string): boolean {
 
     const media = window.matchMedia(query)
     setMatches(media.matches)
-    
+
     const listener = (e: MediaQueryListEvent) => setMatches(e.matches)
     media.addEventListener('change', listener)
-    
+
     return () => media.removeEventListener('change', listener)
   }, [query])
 
@@ -97,10 +97,10 @@ export function EnhancedProjectCard({
   const [isLoading, setIsLoading] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [imageError, setImageError] = useState(false)
-  
+
   const cardRef = useRef<HTMLDivElement>(null)
-  const longPressTimer = useRef<NodeJS.Timeout>()
-  
+  const longPressTimer = useRef<NodeJS.Timeout>(undefined)
+
   const isMobile = useIsMobile()
   const hasHover = useHasHover()
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -113,11 +113,11 @@ export function EnhancedProjectCard({
   // Enhanced mobile click handler with loading state
   const handleMobileClick = useCallback(async (e: React.MouseEvent) => {
     if (!isMobile || !link) return
-    
+
     e.preventDefault()
     setIsLoading(true)
     hapticFeedback()
-    
+
     // Simulate loading delay for better UX
     setTimeout(() => {
       window.open(link, '_blank', 'noopener,noreferrer')
@@ -128,7 +128,7 @@ export function EnhancedProjectCard({
   // Long press handler for context menu
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (!isMobile) return
-    
+
     setIsPressed(true)
     longPressTimer.current = setTimeout(() => {
       hapticFeedback()
@@ -190,7 +190,7 @@ export function EnhancedProjectCard({
   }, [])
 
   return (
-    <Card 
+    <Card
       ref={cardRef}
       className={`
         relative overflow-hidden transition-all duration-500 ease-out
@@ -203,8 +203,8 @@ export function EnhancedProjectCard({
       `}
       style={{
         borderColor: isHovered ? 'rgba(138, 43, 226, 0.6)' : 'transparent',
-        boxShadow: isHovered 
-          ? '0 0 20px rgba(138, 43, 226, 0.4), 0 0 40px rgba(138, 43, 226, 0.2), 0 0 60px rgba(138, 43, 226, 0.1)' 
+        boxShadow: isHovered
+          ? '0 0 20px rgba(138, 43, 226, 0.4), 0 0 40px rgba(138, 43, 226, 0.2), 0 0 60px rgba(138, 43, 226, 0.1)'
           : 'none',
         transition: 'all 0.5s ease-out, box-shadow 0.5s ease-out, border-color 0.5s ease-out'
       }}
@@ -235,17 +235,17 @@ export function EnhancedProjectCard({
                   <h3 className="font-medium text-base sm:text-lg leading-tight">
                     {title}
                   </h3>
-                  
+
                   {/* Responsive badges */}
                   <div className={`flex gap-1.5 ${isMobile ? 'flex-wrap' : ''}`}>
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={`text-xs flex items-center gap-1 ${getStatusColor()}`}
                     >
                       {getStatusIcon()}
                       {status}
                     </Badge>
-                    
+
                     {academic && (
                       <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
                         academic
@@ -263,10 +263,9 @@ export function EnhancedProjectCard({
                     onClick={handleFavoriteToggle}
                     aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                   >
-                    <Heart 
-                      className={`w-4 h-4 transition-colors ${
-                        isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'
-                      }`} 
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'
+                        }`}
                     />
                   </Button>
                 )}
@@ -275,7 +274,7 @@ export function EnhancedProjectCard({
               {/* Enhanced Thumbnail with better aspect ratio handling */}
               {thumbnailUrl && !imageError && (
                 <div className="mb-3 rounded-lg overflow-hidden bg-muted">
-                  <img 
+                  <img
                     src={thumbnailUrl || "/placeholder.svg"}
                     alt={`${title} preview`}
                     className="w-full h-32 sm:h-40 object-cover object-center"
@@ -306,7 +305,7 @@ export function EnhancedProjectCard({
                     : description
                   }
                 </p>
-                
+
                 {shouldTruncateDescription && (
                   <Button
                     variant="ghost"
@@ -349,7 +348,7 @@ export function EnhancedProjectCard({
                     {tech}
                   </Badge>
                 ))}
-                
+
                 {shouldTruncateTech && (
                   <Button
                     variant="ghost"
@@ -386,11 +385,11 @@ export function EnhancedProjectCard({
                   onMouseEnter={() => setHoveredLink("view")}
                   onMouseLeave={() => setHoveredLink(null)}
                 >
-                  View 
+                  View
                   <ExternalLink className="w-3 h-3 transition-all duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               )}
-              
+
               {documentationLink && (
                 <a
                   href={documentationLink}
@@ -400,7 +399,7 @@ export function EnhancedProjectCard({
                   onMouseEnter={() => setHoveredLink("docs")}
                   onMouseLeave={() => setHoveredLink(null)}
                 >
-                  Docs 
+                  Docs
                   <FileText className="w-3 h-3 transition-all duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               )}
@@ -447,7 +446,7 @@ export function EnhancedProjectCard({
                   View
                 </Button>
               )}
-              
+
               {documentationLink && (
                 <Button
                   variant="outline"
@@ -462,7 +461,7 @@ export function EnhancedProjectCard({
                   Docs
                 </Button>
               )}
-              
+
               {(link || documentationLink) && (
                 <Button
                   variant="outline"
