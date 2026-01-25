@@ -11,26 +11,26 @@ import ConvexClientProvider from "./convex-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Bala's Portfolio",
+  title: "Jesse Pinkman's Portfolio",
   description:
     "Passionate Postgraduate with a strong foundation in full-stack development and AI integration. Portfolio showcasing modern web applications and innovative projects.",
   keywords: ["Full-Stack Developer", "React", "Next.js", "AI Integration", "Web Development"],
   authors: [{ name: "vinsmoke" }],
-  creator: "Bala",
+  creator: "Jesse Pinkman",
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://portfolio-ochre-nu-66.vercel.app",
-    title: "Bala's Portfolio",
+    title: "Jesse Pinkman's Portfolio",
     description: "Passionate Postgraduate with a strong foundation in full-stack development and AI integration.",
     siteName: "Slippinjimmy",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bala's Portfolio",
+    title: "Jesse Pinkman's Portfolio",
     description: "Passionate Postgraduate with a strong foundation in full-stack development and AI integration.",
   },
-    generator: 'xo'
+  generator: 'xo'
 }
 
 export default function RootLayout({
@@ -41,12 +41,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}><ConvexClientProvider>
-  
+
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
-  </ConvexClientProvider>
-  
+      </ConvexClientProvider>
+
       </body>
     </html>
   )

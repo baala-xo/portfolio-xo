@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { MapPin, Mail, FileText, Cake } from "lucide-react"
 import Image from "next/image"
@@ -15,12 +15,24 @@ import { FaInstagram } from 'react-icons/fa';
 export function IdentityCard() {
   const [isHovered, setIsHovered] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isMobile, setIsMobile] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-
-    if (!cardRef.current) return
+    // Disable physics on mobile
+    if (isMobile || !cardRef.current) return
 
     const rect = cardRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -39,8 +51,7 @@ export function IdentityCard() {
 
   const handleMouseLeave = () => {
     setIsHovered(false)
-    // The `isMobile` check is removed from here.
-    if (cardRef.current) {
+    if (!isMobile && cardRef.current) {
       cardRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)"
     }
   }
@@ -49,13 +60,11 @@ export function IdentityCard() {
     <div className="relative">
       <Card
         ref={cardRef}
-        className={`w-80 h-96 p-6 bg-gradient-to-br from-background via-background to-muted/50 border-2 backdrop-blur-sm transition-all duration-500 ease-out cursor-pointer relative ${
-          isHovered ? "identity-card-glow" : "border-border/50"
-        }`}
-        onMouseMove={handleMouseMove}
-        // The `isMobile` check is removed from here.
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={handleMouseLeave}
+        className={`w-[calc(100vw-3rem)] max-w-80 h-auto min-h-[24rem] p-5 md:p-6 bg-gradient-to-br from-background via-background to-muted/50 md:border-2 border border-border/50 backdrop-blur-sm transition-all duration-500 ease-out cursor-pointer relative ${isMobile || isHovered ? "identity-card-glow" : ""
+          }`}
+        onMouseMove={isMobile ? undefined : handleMouseMove}
+        onMouseEnter={isMobile ? undefined : () => setIsHovered(true)}
+        onMouseLeave={isMobile ? undefined : handleMouseLeave}
       >
         {/* Animated background gradient */}
         <div
@@ -93,7 +102,7 @@ export function IdentityCard() {
               >
                 <Github className="w-4 h-4" />
               </a>
-              <a
+              {/* <a
                 href="https://x.com/ba1a_xo"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -110,7 +119,7 @@ export function IdentityCard() {
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4" />
-              </a>
+              </a> */}
               <a
                 href="https://www.instagram.com/bala.abq/"
                 target="_blank"
@@ -125,7 +134,7 @@ export function IdentityCard() {
 
           {/* Name and title */}
           <div className="space-y-2 mb-6">
-            <h3 className="text-xl font-bold">Bala 🧃</h3>
+            <h3 className="text-xl font-bold">Jesse Pinkman 🧃</h3>
             <p className="text-sm text-muted-foreground">Software Developer</p>
           </div>
 
@@ -143,9 +152,7 @@ export function IdentityCard() {
               <Cake className="w-4 h-4 text-muted-foreground" />
               <span className="text-muted-foreground">22 years old</span>
             </div>
-            <div className="flex items-center gap-2 pr-4">
-              <DiscordStatus />
-            </div>
+            <DiscordStatus />
           </div>
 
           {/* Status */}

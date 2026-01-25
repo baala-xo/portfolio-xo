@@ -10,16 +10,19 @@ export function HeroSection() {
   }
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center px-4 relative">
+    <section id="home" className="min-h-screen md:min-h-screen flex items-center justify-center px-4 py-20 md:py-4 relative" style={{ minHeight: '100dvh' }}>
       <div className="container max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-8 lg:pr-8">
-            <div className="space-y-6">
-              <div className="space-y-2">
+          <div className="space-y-6 lg:space-y-8 lg:pr-8">
+            <div className="space-y-4 lg:space-y-6">
+              <div className="space-y-1 md:space-y-2">
                 <p className="text-lg text-muted-foreground font-medium">Hello, I'm</p>
+                <p className="text-sm text-gray-400 font-light italic tracking-wide mt-1">
+                  தெய்வத்தான் ஆகா தெனினும் முயற்சிதன் மெய்வருத்தக் கூலி தரும் (குறள் 619)
+                </p>
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-none">
-                  Balachandar<span className="text-primary">.</span>
+                  Jesse Pinkman<span className="text-primary">.</span>
                 </h1>
                 <h2 className="text-2xl md:text-3xl text-muted-foreground font-light">Full-Stack Developer</h2>
               </div>

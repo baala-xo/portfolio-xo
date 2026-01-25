@@ -13,8 +13,8 @@ const navItems = [
 
 const socialLinks = [
   { href: "https://github.com/baala-xo", icon: Github, label: "GitHub" },
-  { href: "https://x.com/ba1a_xo", icon: Twitter, label: "Twitter" },
-  { href: "https://www.linkedin.com/in/bala-xo/", icon: Linkedin, label: "LinkedIn" },
+  // { href: "https://x.com/ba1a_xo", icon: Twitter, label: "Twitter" },
+  // { href: "https://www.linkedin.com/in/bala-xo/", icon: Linkedin, label: "LinkedIn" },
 ]
 
 export function BottomNavigation() {
@@ -77,9 +77,8 @@ export function BottomNavigation() {
       {/* Desktop Navigation */}
       <nav className="hidden md:block fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-max">
         <motion.div
-          className={`relative bg-black/20 backdrop-blur-xl rounded-full border border-gray-800/50 shadow-xl transition-all duration-500 ease-out overflow-hidden ${
-            isHovered ? "px-6" : "px-4"
-          }`}
+          className={`relative bg-black/20 backdrop-blur-xl rounded-full border border-gray-800/50 shadow-xl transition-all duration-500 ease-out overflow-hidden ${isHovered ? "px-6" : "px-4"
+            }`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           initial={{ y: 50, opacity: 0 }}
@@ -103,9 +102,8 @@ export function BottomNavigation() {
                   <motion.button
                     key={item.href}
                     onClick={() => scrollToSection(item.href)}
-                    className={`relative flex flex-col items-center space-y-1 transition-all duration-300 group ${
-                      isActive ? "text-white" : "text-gray-400 hover:text-gray-200"
-                    }`}
+                    className={`relative flex flex-col items-center space-y-1 transition-all duration-300 group ${isActive ? "text-white" : "text-gray-400 hover:text-gray-200"
+                      }`}
                     aria-label={item.label}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -270,11 +268,10 @@ export function BottomNavigation() {
                       <motion.button
                         key={item.href}
                         onClick={() => scrollToSection(item.href)}
-                        className={`relative flex items-center justify-center space-x-2.5 p-3 rounded-xl transition-all duration-200 ${
-                          isActive
+                        className={`relative flex items-center justify-center space-x-2.5 p-3 rounded-xl transition-all duration-200 ${isActive
                             ? "bg-neutral-800/60 backdrop-blur-lg border border-neutral-700/70 text-neutral-100 shadow-lg"
                             : "bg-neutral-800/30 backdrop-blur-lg border border-neutral-700/50 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50 hover:border-neutral-600/60"
-                        }`}
+                          }`}
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{
@@ -380,9 +377,8 @@ export function BottomNavigation() {
                   <motion.button
                     key={item.href}
                     onClick={() => scrollToSection(item.href)}
-                    className={`relative p-3 rounded-xl transition-all duration-200 ${
-                      isActive ? "text-neutral-100" : "text-neutral-400 hover:text-neutral-200"
-                    }`}
+                    className={`relative p-3 rounded-xl transition-all duration-200 ${isActive ? "text-neutral-100" : "text-neutral-400 hover:text-neutral-200"
+                      }`}
                     aria-label={item.label}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}

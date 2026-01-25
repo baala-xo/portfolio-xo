@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import useSWR from "swr"
 import { FaSpotify } from "react-icons/fa"
-import { Badge } from "@/components/ui/badge"
+import { Terminal, Activity, Zap } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
@@ -61,7 +61,7 @@ export function DiscordStatus() {
       revalidateOnFocus: false,
       dedupingInterval: 5000,
       errorRetryCount: 3,
-      errorRetryInterval: (retryCount) => Math.min(1000 * Math.pow(2, retryCount), 10000),
+      errorRetryInterval: 5000,
       onLoadingSlow: () => {
         console.log("[v0] Loading is taking longer than expected...")
       },
@@ -113,85 +113,57 @@ export function DiscordStatus() {
 
   if (error) {
     return (
-      <div className="flex items-center gap-2 opacity-60">
-        <Badge variant="destructive" className="text-xs animate-pulse">
-          {retryCount > 0 ? `Retrying... (${retryCount}/3)` : "Connection Failed"}
-        </Badge>
-        <div className="flex gap-1">
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className={cn(
-                "w-1.5 h-1.5 rounded-full transition-colors duration-300",
-                i < retryCount ? "bg-red-400" : "bg-gray-300",
-              )}
-            />
-          ))}
+      <div className="flex items-center gap-3 text-sm opacity-60">
+        <Terminal className="w-4 h-4 text-red-500/70" />
+        <div className="font-mono text-[10px] tracking-tighter uppercase text-red-500/70">
+          ERR: DISCONNECT_{retryCount}/3
         </div>
       </div>
     )
   }
 
-  if (isLoading || !data || !data.data || !hasInitialLoad || loadingStage !== "complete") {
-    const getLoadingText = () => {
-      switch (loadingStage) {
-        case "connecting":
-          return "Connecting to Discord..."
-        case "discord":
-          return "Loading Discord status..."
-        case "spotify":
-          return "Checking Spotify activity..."
-        default:
-          return "Fetching status..."
-      }
-    }
-
+  if ((isLoading && !data) || !hasInitialLoad || (loadingStage !== "complete" && !data)) {
     return (
-      <div className="flex items-center gap-3">
-        <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
-            <span className="animate-pulse">{getLoadingText()}</span>
-          </div>
-        </Badge>
-
-        <div className="flex gap-1">
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className={cn(
-                "w-1.5 h-1.5 rounded-full transition-all duration-500",
-                loadingStage === "connecting"
-                  ? "bg-blue-400 animate-bounce"
-                  : loadingStage === "discord" && i <= 1
-                    ? "bg-green-400 animate-pulse"
-                    : loadingStage === "spotify" && i <= 2
-                      ? "bg-green-400 animate-pulse"
-                      : "bg-gray-300",
-              )}
-              style={{ animationDelay: `${i * 0.15}s` }}
-            />
-          ))}
+      <div className="flex items-center gap-3 text-sm h-[32px]">
+        <Terminal className="w-4 h-4 text-muted-foreground/40" />
+        <div className="font-mono text-[10px] tracking-tighter uppercase text-muted-foreground/40">
+          SYNCING<span className="animate-pulse">_</span>
         </div>
       </div>
     )
   }
 
+  if (!data || !data.data) return null
   const statusData = data.data
 
   // Get status color based on Discord status
   const getStatusColor = (status: string) => {
     switch (status) {
       case "online":
-        return "bg-green-500"
+        return "text-emerald-400"
       case "idle":
-        return "bg-yellow-500"
+        return "text-amber-400"
       case "dnd":
-        return "bg-red-500"
+        return "text-rose-400"
       case "offline":
-        return "bg-gray-500"
+        return "text-muted-foreground/40"
       default:
-        return "bg-gray-400"
+        return "text-muted-foreground/40"
+    }
+  }
+
+  const getStatusDotColor = (status: string) => {
+    switch (status) {
+      case "online":
+        return "bg-emerald-500"
+      case "idle":
+        return "bg-amber-500"
+      case "dnd":
+        return "bg-rose-500"
+      case "offline":
+        return "bg-muted-foreground/40"
+      default:
+        return "bg-muted-foreground/40"
     }
   }
 
@@ -224,13 +196,23 @@ export function DiscordStatus() {
   }
 
   const getTooltipContent = (isSpotify = false) => (
-    <div className="text-xs space-y-1.5">
-      <div className="font-medium">Data Source: Lanyard API</div>
-      <div className="text-muted-foreground">Last updated: {getRefreshTimeText()}</div> 
+    <div className="font-mono text-[10px] space-y-1 p-1 uppercase tracking-tight">
+      <div className="flex items-center gap-2">
+        <div className="w-1 h-1 rounded-full bg-emerald-500" />
+        <span className="text-muted-foreground/60">SOURCE:</span>
+        <span>LANYARD_API_V1</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <Activity className="w-3 h-3 text-muted-foreground/60" />
+        <span className="text-muted-foreground/60">REFRESH_INT:</span>
+        <span>10S</span>
+      </div>
+      <div className="text-muted-foreground/40 mt-2 pt-1 border-t border-border/10">
+        LAST_SYNC: {getRefreshTimeText()}
+      </div>
       {isRefreshing && (
-        <div className="text-blue-400 flex items-center gap-1">
-          <div className="w-2 h-2 border border-blue-400/30 border-t-blue-400 rounded-full animate-spin" />
-          Refreshing...
+        <div className="text-emerald-400/60 animate-pulse mt-1">
+          {">> "}RE-SYNCING...
         </div>
       )}
     </div>
@@ -243,45 +225,39 @@ export function DiscordStatus() {
           <TooltipTrigger asChild>
             <div
               className={cn(
-                "flex items-center gap-3 transition-all duration-700 ease-out cursor-help",
-                isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95",
+                "flex items-center gap-3 transition-all duration-700 ease-out cursor-help group",
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1",
               )}
               onClick={() => setIsTooltipOpen(!isTooltipOpen)}
             >
-              <Badge className="text-xs bg-green-500/10 text-green-600 border-green-500/20 shadow-sm">
-                <div className="flex items-center gap-1.5">
-                  <div className="relative">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-green-500 animate-ping opacity-40" />
+              <Terminal className="w-4 h-4 text-muted-foreground shrink-0" />
+
+              <div className="flex flex-col min-w-0 font-mono tracking-tighter">
+                <div className="flex items-center gap-1.5 text-[10px]">
+                  <span className="text-muted-foreground/60 uppercase">STATUS:</span>
+                  <span className="text-emerald-400/80 uppercase">LIVE</span>
+                  <div className="relative flex h-1.5 w-1.5 ml-0.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                   </div>
-                  Live
-                  {isRefreshing && (
-                    <div className="w-2 h-2 border border-green-600/30 border-t-green-600 rounded-full animate-spin ml-1" />
-                  )}
-                </div>
-              </Badge>
-
-              <div className="flex items-center gap-2 group">
-                <div className="relative">
-                  <FaSpotify className="w-4 h-4 text-green-500 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12" />
-                  <div className="absolute -inset-1 bg-green-500/20 rounded-full animate-ping opacity-75" />
                 </div>
 
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs text-green-600 font-medium">Listening to Spotify</span>
-                  <div className="text-xs text-muted-foreground truncate max-w-[200px] transition-all duration-300">
-                    <span className="font-medium">{statusData.spotify.song}</span>
-                    <span className="mx-1">•</span>
-                    <span>{statusData.spotify.artist}</span>
+                <div className="flex items-center gap-1.5 text-[11px] leading-none mt-0.5 w-full">
+                  <span className="text-muted-foreground/40 uppercase shrink-0">PLAYING:</span>
+                  <div className="flex items-center gap-1.5 truncate min-w-0 flex-1">
+                    <FaSpotify className="w-3 h-3 text-emerald-500/60 shrink-0" />
+                    <span className="text-muted-foreground group-hover:text-foreground transition-colors truncate">
+                      {statusData.spotify.song}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </TooltipTrigger>
           <TooltipContent
-            side="bottom"
-            sideOffset={8}
-            className="max-w-xs z-[9999]"
+            side="right"
+            sideOffset={12}
+            className="bg-background/95 border-border/50 backdrop-blur-md z-[9999]"
             avoidCollisions={true}
             collisionPadding={16}
             onClick={(e) => e.stopPropagation()}
@@ -299,55 +275,37 @@ export function DiscordStatus() {
         <TooltipTrigger asChild>
           <div
             className={cn(
-              "flex items-center gap-3 transition-all duration-700 ease-out cursor-help",
-              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95",
+              "flex items-center gap-3 transition-all duration-700 ease-out cursor-help group text-sm",
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1",
             )}
             onClick={() => setIsTooltipOpen(!isTooltipOpen)}
           >
-            <Badge className="text-xs bg-slate-500/10 text-slate-600 border-slate-500/20 shadow-sm">
-              <div className="flex items-center gap-1.5">
-                <div className="relative">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-pulse" />
-                  <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-slate-500 animate-pulse opacity-30" />
-                </div>
-                Status
-                {isRefreshing && (
-                  <div className="w-2 h-2 border border-slate-600/30 border-t-slate-600 rounded-full animate-spin ml-1" />
-                )}
-              </div>
-            </Badge>
+            <Terminal className="w-4 h-4 text-muted-foreground shrink-0" />
 
-            <div className="flex items-center gap-2 group">
-              <div className="relative">
-                <div
-                  className={cn(
-                    "w-3 h-3 rounded-full transition-all duration-500",
-                    getStatusColor(statusData.discord_status),
-                    statusData.discord_status === "online" && "animate-pulse",
-                  )}
-                />
-                {statusData.discord_status === "online" && (
-                  <div className="absolute inset-0 w-3 h-3 rounded-full bg-green-500 animate-ping opacity-30" />
-                )}
-              </div>
-
-              <div className="flex flex-col">
-                <span className="text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
+            <div className="flex flex-col font-mono tracking-tighter">
+              <div className="flex items-center gap-1.5 text-[10px]">
+                <span className="text-muted-foreground/60 uppercase">STATUS:</span>
+                <span className={cn("uppercase", getStatusColor(statusData.discord_status))}>
                   {getStatusText(statusData.discord_status)}
                 </span>
-                {statusData.discord_user.username && (
-                  <span className="text-xs text-muted-foreground/70 transition-colors duration-300 group-hover:text-muted-foreground">
-                    @{statusData.discord_user.username}
-                  </span>
-                )}
+                <div className={cn(
+                  "w-1.5 h-1.5 rounded-full ml-0.5",
+                  getStatusDotColor(statusData.discord_status),
+                  statusData.discord_status === "online" && "animate-pulse"
+                )} />
               </div>
+              {statusData.discord_user.username && (
+                <div className="text-[10px] text-muted-foreground/30 uppercase mt-0.5">
+                  ID: {statusData.discord_user.username}
+                </div>
+              )}
             </div>
           </div>
         </TooltipTrigger>
         <TooltipContent
-          side="bottom"
-          sideOffset={8}
-          className="max-w-xs z-[9999]"
+          side="right"
+          sideOffset={12}
+          className="bg-background/95 border-border/50 backdrop-blur-md z-[9999]"
           avoidCollisions={true}
           collisionPadding={16}
           onClick={(e) => e.stopPropagation()}

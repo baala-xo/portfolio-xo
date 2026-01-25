@@ -1,5 +1,8 @@
 "use client"
 
+import { useState } from "react"
+import { motion } from "framer-motion"
+
 import { IdentityCard } from "@/components/identity-card"
 import { EnhancedProjectCard } from "@/components/enhanced-project-card"
 import { EducationSection } from "@/components/education-section"
@@ -9,7 +12,8 @@ import { BottomNavigation } from "@/components/bottom-navigation"
 import { AboutSection } from "@/components/about-section"
 import { Hind_Madurai } from "next/font/google"
 import DigitalGuestbook from "@/digital-guestbook"
-import { motion } from "framer-motion"
+import { MusicPlayer } from "@/components/music-player"
+import Snowfall from "react-snowfall"
 
 const hindMadurai = Hind_Madurai({
   subsets: ["tamil"],
@@ -59,8 +63,24 @@ const projectStagger = {
 }
 
 export default function Portfolio() {
+  // Honest mode removed
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground relative">
+      {/* Ambient Snowfall */}
+      <Snowfall
+        color="#72e93bff"
+        snowflakeCount={8}
+        style={{
+          position: 'fixed',
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      />
+      <MusicPlayer />
+
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center px-6 py-20">
         <div className="max-w-4xl mx-auto">
@@ -70,15 +90,19 @@ export default function Portfolio() {
               <div className="space-y-4">
                 {/* Hidden on mobile screens */}
                 <h1 className="text-5xl md:text-6xl font-bold leading-tight hidden md:block">Hello :)</h1>
-                <p className={`${hindMadurai.className} text-xl text-muted-foreground hidden md:block`}>{"வணக்கம் 💜"}</p>
-                <p className="text-xl text-muted-foreground hidden md:block">{"//"}</p>
+                <p className={`${hindMadurai.className} text-xl text-muted-foreground hidden md:block`}>{"🩵"}</p>
+                <p className={`${hindMadurai.className} text-sm text-gray-400 italic hidden md:block`}>
+                  {"தெய்வத்தான் ஆகா தெனினும் முயற்சிதன் மெய்வருத்தக் கூலி தரும் (குறள் 619)"}
+                </p>
                 {/* Visible on mobile screens */}
                 <h1 className="text-4xl font-bold leading-tight block md:hidden">Hello :)</h1>
                 <p className={`${hindMadurai.className} text-lg text-muted-foreground block md:hidden`}>
                   {" "}
-                  {"வணக்கம் 💜"}
+                  {"🩵"}
                 </p>
-                <p className="text-lg text-muted-foreground block md:hidden">{"//"}</p>
+                <p className={`${hindMadurai.className} text-xs text-gray-400 italic block md:hidden`}>
+                  {"தெய்வத்தான் ஆகா தெனினும் முயற்சிதன் மெய்வருத்தக் கூலி தரும் (குறள் 619)"}
+                </p>
               </div>
             </motion.div>
             {/* Right Content - Enhanced ID Card - Restored original positioning */}
@@ -153,7 +177,7 @@ export default function Portfolio() {
                 lastUpdated="1 week ago"
               />
             </motion.div>
-                        <motion.div variants={smoothScrollFade}>
+            <motion.div variants={smoothScrollFade}>
               <EnhancedProjectCard
                 number={4}
                 title="AI Chatbot Widget"
