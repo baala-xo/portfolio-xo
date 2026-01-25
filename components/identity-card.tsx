@@ -84,7 +84,7 @@ export function IdentityCard() {
           <div className="flex items-center justify-between mb-6">
             <div className="w-20 h-20 rounded-full overflow-hidden bg-muted">
               <Image
-                src="/aaron paul.jpeg"
+                src="/bala.jpeg"
                 alt="Sanji 👩‍🦯‍➡️"
                 width={80}
                 height={80}
@@ -134,7 +134,7 @@ export function IdentityCard() {
 
           {/* Name and title */}
           <div className="space-y-2 mb-6">
-            <h3 className="text-xl font-bold">Jesse Pinkman 🧃</h3>
+            <h3 className="text-xl font-bold">Bala 🩵</h3>
             <p className="text-sm text-muted-foreground">Software Developer</p>
           </div>
 
