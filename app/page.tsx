@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 
 import { IdentityCard } from "@/components/identity-card"
+import { GithubActivityBadge } from "@/components/github-activity-badge"
 import { EnhancedProjectCard } from "@/components/enhanced-project-card"
 import { EducationSection } from "@/components/education-section"
 import { SkillsSection } from "@/components/skills-section"
@@ -107,12 +108,15 @@ export default function Portfolio() {
             </motion.div>
             {/* Right Content - Enhanced ID Card - Restored original positioning */}
             <motion.div
-              className="flex justify-center lg:justify-end"
+              className="flex flex-col items-center gap-4 lg:items-end"
               initial="initial"
               animate="animate"
               variants={heroFromBottom}
             >
               <IdentityCard />
+              <div className="w-full max-w-[520px]">
+                <GithubActivityBadge username="baala-xo" />
+              </div>
             </motion.div>
           </div>
         </div>
