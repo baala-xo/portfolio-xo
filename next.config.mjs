@@ -7,6 +7,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      { source: '/arcade', destination: '/arcade.html' },
+    ]
+  },
 }
 
 export default nextConfig

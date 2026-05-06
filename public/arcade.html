@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BLEEP-BOX // 8-bit synth pad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #0d0221;
+    --bg-1: #1a0b3d;
+    --crt: #2a1656;
+    --neon-pink: #ff2e88;
+    --neon-cyan: #00f0ff;
+    --neon-yellow: #fff200;
+    --neon-green: #00ff9d;
+    --neon-purple: #b537f2;
+    --shadow: #000;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-0);
+    font-family: 'VT323', monospace;
+    color: var(--neon-cyan);
+    overflow: hidden;
+  }
+
+  /* CRT scanlines */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.18) 0px,
+      rgba(0,0,0,0.18) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 100;
+    animation: flicker 8s infinite;
+  }
+  /* CRT vignette */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+    z-index: 99;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.97; }
+  }
+
+  .stage {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(181,55,242,0.35), transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(255,46,136,0.3), transparent 55%),
+      var(--bg-0);
+  }
+
+  .console {
+    width: min(880px, 100%);
+    background: linear-gradient(180deg, #2a1656 0%, #1a0b3d 100%);
+    border: 4px solid #000;
+    box-shadow:
+      0 0 0 4px var(--neon-pink),
+      0 0 0 8px #000,
+      0 0 60px rgba(255,46,136,0.5),
+      inset 0 0 40px rgba(0,0,0,0.6);
+    padding: 20px;
+    position: relative;
+  }
+
+  /* corner screws */
+  .console::before, .console::after,
+  .screw-tl, .screw-tr {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    background: #000;
+    border: 2px solid var(--neon-cyan);
+    border-radius: 50%;
+  }
+  .console::before { top: 8px; left: 8px; }
+  .console::after  { bottom: 8px; right: 8px; }
+  .screw-tl { top: 8px; right: 8px; }
+  .screw-tr { bottom: 8px; left: 8px; }
+
+  .titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 0 8px;
+  }
+
+  h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--neon-yellow);
+    letter-spacing: 2px;
+    text-shadow:
+      2px 2px 0 var(--neon-pink),
+      4px 4px 0 #000,
+      0 0 20px rgba(255,242,0,0.6);
+  }
+
+  .led {
+    display: inline-block;
+    width: 10px; height: 10px;
+    background: var(--neon-green);
+    border: 2px solid #000;
+    box-shadow: 0 0 8px var(--neon-green);
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.3; box-shadow: 0 0 2px var(--neon-green); } }
+
+  .status {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--neon-green);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* Grid */
+  .grid-wrap {
+    background: #000;
+    border: 3px solid var(--neon-cyan);
+    padding: 8px;
+    box-shadow: inset 0 0 20px rgba(0,240,255,0.2);
+  }
+
+  .row-labels {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 3px;
+  }
+
+  .row {
+    display: contents;
+  }
+
+  .label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--neon-pink);
+    text-align: center;
+    padding: 4px 0;
+    text-shadow: 0 0 6px var(--neon-pink);
+  }
+
+  .cell {
+    aspect-ratio: 1;
+    background: #1a0b3d;
+    border: 2px solid #2a1656;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.08s, background 0.1s;
+  }
+  .cell:hover {
+    background: #3a1f6e;
+    transform: scale(1.08);
+  }
+  .cell.active {
+    background: var(--note-color, var(--neon-cyan));
+    border-color: #fff;
+    box-shadow:
+      0 0 12px var(--note-color, var(--neon-cyan)),
+      inset 0 0 8px rgba(255,255,255,0.4);
+  }
+  .cell.playing {
+    transform: scale(1.2);
+    box-shadow:
+      0 0 24px var(--note-color, var(--neon-yellow)),
+      0 0 8px #fff inset;
+    z-index: 5;
+  }
+
+  /* step indicator column */
+  .col-indicator {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 3px;
+    margin-bottom: 6px;
+    margin-left: 44px;
+  }
+  .step {
+    height: 6px;
+    background: #1a0b3d;
+    border: 1px solid #2a1656;
+  }
+  .step.now {
+    background: var(--neon-yellow);
+    box-shadow: 0 0 8px var(--neon-yellow);
+  }
+  .step.beat {
+    border-color: var(--neon-pink);
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 12px 16px;
+    background: var(--bg-1);
+    color: var(--neon-cyan);
+    border: 3px solid var(--neon-cyan);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow:
+      4px 4px 0 #000,
+      inset 0 0 0 2px #000;
+    transition: transform 0.06s, box-shadow 0.06s;
+    position: relative;
+  }
+  .btn:hover {
+    background: var(--neon-cyan);
+    color: #000;
+  }
+  .btn:active, .btn.pressed {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #000, inset 0 0 0 2px #000;
+  }
+  .btn.play { border-color: var(--neon-green); color: var(--neon-green); }
+  .btn.play:hover { background: var(--neon-green); color: #000; }
+  .btn.play.pressed { background: var(--neon-green); color: #000; }
+  .btn.clear { border-color: var(--neon-pink); color: var(--neon-pink); }
+  .btn.clear:hover { background: var(--neon-pink); color: #000; }
+
+  .knob-group {
+    display: flex; gap: 14px; align-items: center;
+    padding: 8px 12px;
+    background: #000;
+    border: 2px solid var(--neon-purple);
+  }
+  .knob {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .knob label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--neon-purple);
+  }
+  .knob input[type="range"] {
+    width: 80px;
+    accent-color: var(--neon-pink);
+  }
+  .knob .val {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--neon-yellow);
+  }
+
+  .wave-select {
+    display: flex; gap: 4px;
+  }
+  .wave-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 6px 8px;
+    background: #000;
+    color: var(--neon-purple);
+    border: 2px solid var(--neon-purple);
+    cursor: pointer;
+  }
+  .wave-btn.active {
+    background: var(--neon-purple);
+    color: #000;
+    box-shadow: 0 0 10px var(--neon-purple);
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--neon-purple);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 700px) {
+    html, body { overflow-x: hidden; }
+    .stage { padding: 12px; align-items: start; padding-top: 56px; }
+    .console { padding: 12px; }
+    .titlebar { margin-bottom: 10px; padding: 0 4px; gap: 8px; }
+    h1 { font-size: 11px; letter-spacing: 1px; }
+    .status { font-size: 7px; gap: 4px; }
+    .led { width: 8px; height: 8px; }
+
+    .row-labels { grid-template-columns: 24px 1fr; gap: 2px; }
+    .grid { gap: 2px; }
+    .col-indicator { gap: 2px; margin-left: 26px; }
+    .label { font-size: 6px; padding: 2px 0; }
+    .cell { border-width: 1px; }
+    .step { height: 4px; }
+
+    .controls {
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+    .btn-group { gap: 6px; justify-content: center; width: 100%; }
+    .btn { font-size: 8px; padding: 9px 12px; box-shadow: 3px 3px 0 #000, inset 0 0 0 2px #000; }
+    .btn:active, .btn.pressed {
+      transform: translate(3px, 3px);
+      box-shadow: 0 0 0 #000, inset 0 0 0 2px #000;
+    }
+
+    .wave-select { justify-content: center; flex: 1 1 auto; }
+    .wave-btn { padding: 5px 7px; font-size: 7px; }
+
+    .knob-group { gap: 10px; padding: 6px 10px; flex: 1 1 auto; justify-content: center; }
+    .knob input[type="range"] { width: 64px; }
+    .knob label { font-size: 7px; }
+    .knob .val { font-size: 8px; }
+
+    .footer { font-size: 7px; margin-top: 10px; }
+
+    /* Boot screen */
+    .boot { padding: 6vh 5vw; font-size: 14px; }
+    .boot-line.title { font-size: 18px; margin: 12px 0; letter-spacing: 1px; }
+    .boot-prompt { margin-top: 18px; }
+    .boot-prompt button {
+      font-size: 11px;
+      padding: 12px 16px;
+      letter-spacing: 1px;
+    }
+    .cursor { width: 8px; height: 14px; }
+
+    /* Tour tooltip */
+    .tour-tooltip { padding: 12px; }
+    .tour-tooltip h3 { font-size: 9px; }
+    .tour-tooltip p { font-size: 15px; }
+    .tour-tooltip button { font-size: 8px; padding: 6px 8px; }
+    .tour-tooltip .step-count { font-size: 7px; }
+  }
+
+  @media (max-width: 380px) {
+    .stage { padding: 10px; padding-top: 56px; }
+    .console { padding: 10px; }
+    h1 { font-size: 10px; }
+    .row-labels { grid-template-columns: 20px 1fr; }
+    .col-indicator { margin-left: 22px; }
+    .label { font-size: 5px; }
+    .btn { font-size: 7px; padding: 8px 10px; }
+    .knob input[type="range"] { width: 52px; }
+  }
+
+  /* Touch devices: skip cell hover scale to avoid jitter */
+  @media (hover: none) {
+    .cell:hover { transform: none; }
+  }
+
+  /* ===== EXIT LINK ===== */
+  .exit-arcade {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 110;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--neon-cyan);
+    background: rgba(0,0,0,0.85);
+    border: 2px solid var(--neon-cyan);
+    padding: 8px 12px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    box-shadow: 3px 3px 0 #000, 0 0 14px rgba(0,240,255,0.45);
+    transition: transform 0.1s, background 0.1s, color 0.1s;
+  }
+  .exit-arcade:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000, 0 0 22px rgba(0,240,255,0.7);
+  }
+  .exit-arcade:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #000;
+  }
+  @media (max-width: 600px) {
+    .exit-arcade { font-size: 7px; padding: 6px 8px; }
+  }
+
+  /* ===== BOOT SCREEN ===== */
+  .boot {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 200;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 8vh 8vw;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: var(--neon-green);
+    text-shadow: 0 0 8px var(--neon-green);
+    overflow: hidden;
+  }
+  .boot::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg,
+      rgba(0,255,157,0.06) 0px,
+      rgba(0,255,157,0.06) 1px,
+      transparent 1px, transparent 3px);
+    pointer-events: none;
+  }
+  .boot-line {
+    opacity: 0;
+    animation: typeIn 0.05s forwards;
+    white-space: pre;
+  }
+  .boot-line.warn { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
+  .boot-line.ok { color: var(--neon-green); }
+  .boot-line.title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 28px;
+    color: var(--neon-pink);
+    text-shadow: 3px 3px 0 var(--neon-cyan), 6px 6px 0 #000, 0 0 20px var(--neon-pink);
+    margin: 16px 0;
+    letter-spacing: 2px;
+  }
+  @keyframes typeIn { to { opacity: 1; } }
+
+  .boot-prompt {
+    margin-top: 28px;
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0;
+    animation: typeIn 0.3s forwards;
+  }
+  .boot-prompt button {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    padding: 14px 22px;
+    background: var(--neon-pink);
+    color: #000;
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000, 0 0 30px var(--neon-pink);
+    animation: pulse 1.2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .boot-prompt button:hover { background: var(--neon-yellow); }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .cursor {
+    display: inline-block;
+    width: 12px; height: 22px;
+    background: var(--neon-green);
+    margin-left: 4px;
+    animation: blinkCursor 0.8s steps(2) infinite;
+    vertical-align: middle;
+  }
+  @keyframes blinkCursor { 50% { opacity: 0; } }
+
+  /* ===== WALKTHROUGH ===== */
+  .tour-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 150;
+    pointer-events: auto;
+    display: none;
+  }
+  .tour-overlay.active { display: block; }
+
+  .tour-spotlight {
+    position: absolute;
+    border: 3px dashed var(--neon-yellow);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.78), 0 0 30px var(--neon-yellow);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    animation: spotlightPulse 1.5s infinite;
+  }
+  @keyframes spotlightPulse {
+    0%, 100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.78), 0 0 30px var(--neon-yellow); }
+    50% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.78), 0 0 50px var(--neon-pink); }
+  }
+
+  .tour-tooltip {
+    position: absolute;
+    background: var(--bg-1);
+    border: 3px solid var(--neon-cyan);
+    box-shadow: 4px 4px 0 #000, 0 0 30px var(--neon-cyan);
+    padding: 16px;
+    max-width: 280px;
+    z-index: 160;
+    transition: all 0.3s ease;
+  }
+  .tour-tooltip h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--neon-yellow);
+    margin-bottom: 8px;
+    text-shadow: 0 0 6px var(--neon-yellow);
+  }
+  .tour-tooltip p {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: var(--neon-cyan);
+    line-height: 1.3;
+  }
+  .tour-tooltip .tour-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; gap: 8px;
+  }
+  .tour-tooltip .step-count {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--neon-purple);
+  }
+  .tour-tooltip button {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 8px 12px;
+    background: #000;
+    color: var(--neon-green);
+    border: 2px solid var(--neon-green);
+    cursor: pointer;
+  }
+  .tour-tooltip button:hover { background: var(--neon-green); color: #000; }
+  .tour-tooltip button.skip { color: var(--neon-pink); border-color: var(--neon-pink); }
+  .tour-tooltip button.skip:hover { background: var(--neon-pink); color: #000; }
+</style>
+</head>
+<body>
+<!-- EXIT BACK TO PORTFOLIO -->
+<a href="/" class="exit-arcade" aria-label="Back to portfolio">◀ EXIT</a>
+
+<!-- BOOT SCREEN -->
+<div class="boot" id="boot">
+  <div class="boot-line">BLEEP-BOX BIOS v2.04 (c) 1987 NEON SYSTEMS</div>
+  <div class="boot-line">CPU.....Z80A @ 4.19 MHz [OK]</div>
+  <div class="boot-line">RAM.....8K [OK]</div>
+  <div class="boot-line">SOUND...PSG 4-CH WAVE [<span style="color:var(--neon-green)">OK</span>]</div>
+  <div class="boot-line warn">CRT.....WARMING UP...</div>
+  <div class="boot-line ok">> ALL SYSTEMS NOMINAL</div>
+  <div class="boot-line title">★ BLEEP-BOX ★</div>
+  <div class="boot-line" style="color:var(--neon-yellow)">A POCKET CHIPTUNE SEQUENCER</div>
+  <div class="boot-line" style="color:var(--neon-cyan)">> PRESS START TO INSERT COIN<span class="cursor"></span></div>
+  <div class="boot-prompt">
+    <button id="start-btn">▶ INSERT COIN</button>
+  </div>
+</div>
+
+<!-- TOUR OVERLAY -->
+<div class="tour-overlay" id="tour-overlay">
+  <div class="tour-spotlight" id="tour-spotlight"></div>
+  <div class="tour-tooltip" id="tour-tooltip">
+    <h3 id="tour-title">STEP 1</h3>
+    <p id="tour-text">...</p>
+    <div class="tour-nav">
+      <button class="skip" id="tour-skip">SKIP</button>
+      <span class="step-count" id="tour-count">1/5</span>
+      <button id="tour-next">NEXT ▶</button>
+    </div>
+  </div>
+</div>
+<div class="stage">
+  <div class="console">
+    <span class="screw-tl"></span>
+    <span class="screw-tr"></span>
+
+    <div class="titlebar">
+      <h1>★ BLEEP-BOX ★</h1>
+      <div class="status">
+        <span class="led"></span>
+        <span id="status-text">READY</span>
+      </div>
+    </div>
+
+    <div class="col-indicator" id="col-indicator"></div>
+
+    <div class="grid-wrap">
+      <div class="row-labels">
+        <div id="labels" style="display:flex;flex-direction:column;gap:3px;"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="btn-group">
+        <button class="btn play" id="play-btn">▶ PLAY</button>
+        <button class="btn clear" id="clear-btn">✖ CLR</button>
+      </div>
+
+      <div class="wave-select">
+        <button class="wave-btn active" data-wave="square">SQR</button>
+        <button class="wave-btn" data-wave="triangle">TRI</button>
+        <button class="wave-btn" data-wave="sawtooth">SAW</button>
+        <button class="wave-btn" data-wave="sine">SIN</button>
+      </div>
+
+      <div class="knob-group">
+        <div class="knob">
+          <label>BPM</label>
+          <input type="range" id="bpm" min="60" max="200" value="120">
+          <span class="val" id="bpm-val">120</span>
+        </div>
+        <div class="knob">
+          <label>VOL</label>
+          <input type="range" id="vol" min="0" max="100" value="60">
+          <span class="val" id="vol-val">60</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">CLICK CELLS · PRESS PLAY · LISTEN HARD</div>
+  </div>
+</div>
+
+<script>
+  // ===== BOOT SEQUENCE =====
+  const bootLines = document.querySelectorAll('.boot-line');
+  const bootPrompt = document.querySelector('.boot-prompt');
+  bootLines.forEach((line, i) => {
+    line.style.animationDelay = (i * 0.35) + 's';
+  });
+  bootPrompt.style.animationDelay = (bootLines.length * 0.35 + 0.2) + 's';
+
+  // Tiny boot beep
+  function bootBeep() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'square'; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.15, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    o.connect(g).connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  }
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    bootBeep();
+    document.getElementById('boot').style.display = 'none';
+    setTimeout(startTour, 200);
+  });
+
+  // ===== WALKTHROUGH =====
+  const tourSteps = [
+    {
+      target: '.grid-wrap',
+      title: '01 // THE GRID',
+      text: 'Each row is a note (C4 lowest to C5 highest). Each column is a beat. Click any cell to drop a note into your loop.'
+    },
+    {
+      target: '#play-btn',
+      title: '02 // PLAY IT BACK',
+      text: 'Hit PLAY to loop your pattern. The yellow bar above the grid shows which step is firing right now. Spacebar works too.'
+    },
+    {
+      target: '.wave-select',
+      title: '03 // PICK YOUR SOUND',
+      text: 'Switch oscillator shapes. SQR = Game Boy crunch, TRI = mellow flute, SAW = gnarly buzz, SIN = soft whistle.'
+    },
+    {
+      target: '.knob-group',
+      title: '04 // TWEAK THE VIBE',
+      text: 'BPM controls speed (60–200). VOL is the master level. Slide them while playing for live tweaks.'
+    }
+  ];
+
+  let tourIdx = 0;
+  const overlay = document.getElementById('tour-overlay');
+  const spotlight = document.getElementById('tour-spotlight');
+  const tooltip = document.getElementById('tour-tooltip');
+  const tTitle = document.getElementById('tour-title');
+  const tText = document.getElementById('tour-text');
+  const tCount = document.getElementById('tour-count');
+  const tNext = document.getElementById('tour-next');
+  const tSkip = document.getElementById('tour-skip');
+
+  function startTour() {
+    tourIdx = 0;
+    overlay.classList.add('active');
+    showStep();
+  }
+
+  function showStep() {
+    const step = tourSteps[tourIdx];
+    const target = document.querySelector(step.target);
+    if (!target) { endTour(); return; }
+    const r = target.getBoundingClientRect();
+    const pad = 8;
+
+    spotlight.style.left = (r.left - pad) + 'px';
+    spotlight.style.top = (r.top - pad) + 'px';
+    spotlight.style.width = (r.width + pad * 2) + 'px';
+    spotlight.style.height = (r.height + pad * 2) + 'px';
+
+    tTitle.textContent = step.title;
+    tText.textContent = step.text;
+    tCount.textContent = (tourIdx + 1) + '/' + tourSteps.length;
+    tNext.textContent = tourIdx === tourSteps.length - 1 ? 'LET\'S GO ▶' : 'NEXT ▶';
+
+    // position tooltip — try below the target, else above
+    const ttW = Math.min(300, window.innerWidth - 24);
+    const ttH = 180;
+    let left = r.left + r.width / 2 - ttW / 2;
+    let top = r.bottom + 20;
+    if (top + ttH > window.innerHeight) top = r.top - ttH - 20;
+    if (top < 10) top = 10;
+    left = Math.max(10, Math.min(left, window.innerWidth - ttW - 10));
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    tooltip.style.width = ttW + 'px';
+  }
+
+  tNext.addEventListener('click', () => {
+    bootBeep();
+    tourIdx++;
+    if (tourIdx >= tourSteps.length) endTour();
+    else showStep();
+  });
+  tSkip.addEventListener('click', endTour);
+
+  function endTour() {
+    overlay.classList.remove('active');
+  }
+
+  window.addEventListener('resize', () => {
+    if (overlay.classList.contains('active')) showStep();
+  });
+
+  // ===== ORIGINAL APP CODE =====
+  const NOTES = [
+    { name: 'C5', freq: 523.25, color: '#ff2e88' },
+    { name: 'B4', freq: 493.88, color: '#ff6b35' },
+    { name: 'A4', freq: 440.00, color: '#fff200' },
+    { name: 'G4', freq: 392.00, color: '#00ff9d' },
+    { name: 'F4', freq: 349.23, color: '#00f0ff' },
+    { name: 'E4', freq: 329.63, color: '#5eb4ff' },
+    { name: 'D4', freq: 293.66, color: '#b537f2' },
+    { name: 'C4', freq: 261.63, color: '#ff2e88' },
+  ];
+  const STEPS = 16;
+
+  // Build labels
+  const labelsEl = document.getElementById('labels');
+  NOTES.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'label';
+    el.textContent = n.name;
+    el.style.color = n.color;
+    el.style.textShadow = `0 0 6px ${n.color}`;
+    labelsEl.appendChild(el);
+  });
+
+  // Build column indicator
+  const colInd = document.getElementById('col-indicator');
+  const stepEls = [];
+  for (let s = 0; s < STEPS; s++) {
+    const d = document.createElement('div');
+    d.className = 'step' + (s % 4 === 0 ? ' beat' : '');
+    colInd.appendChild(d);
+    stepEls.push(d);
+  }
+
+  // Build grid (rows = notes, cols = steps)
+  const gridEl = document.getElementById('grid');
+  const grid = []; // grid[note][step] => cellEl
+  // We need to build row-by-row but the grid CSS has 16 cols, so loop per note row.
+  // To fit everything in the existing CSS we lay out rows sequentially.
+  gridEl.style.gridTemplateRows = `repeat(${NOTES.length}, 1fr)`;
+  NOTES.forEach((note, ni) => {
+    grid[ni] = [];
+    for (let s = 0; s < STEPS; s++) {
+      const c = document.createElement('div');
+      c.className = 'cell';
+      c.dataset.note = ni;
+      c.dataset.step = s;
+      c.style.setProperty('--note-color', note.color);
+      c.addEventListener('click', () => {
+        c.classList.toggle('active');
+        if (c.classList.contains('active')) playNote(note.freq, 0.15);
+      });
+      gridEl.appendChild(c);
+      grid[ni][s] = c;
+    }
+  });
+
+  // Audio
+  let audioCtx = null;
+  let waveform = 'square';
+  let masterVol = 0.6;
+
+  function ensureAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playNote(freq, duration = 0.2) {
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = waveform;
+    osc.frequency.value = freq;
+    const now = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(masterVol * 0.4, now + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.05);
+  }
+
+  // Sequencer
+  let isPlaying = false;
+  let currentStep = 0;
+  let stepInterval = null;
+  let bpm = 120;
+
+  function stepDuration() {
+    // 16th notes
+    return (60 / bpm) / 4 * 1000;
+  }
+
+  function tick() {
+    // clear previous step indicators
+    stepEls.forEach(e => e.classList.remove('now'));
+    document.querySelectorAll('.cell.playing').forEach(c => c.classList.remove('playing'));
+
+    stepEls[currentStep].classList.add('now');
+
+    NOTES.forEach((note, ni) => {
+      const cell = grid[ni][currentStep];
+      if (cell.classList.contains('active')) {
+        playNote(note.freq, 0.18);
+        cell.classList.add('playing');
+      }
+    });
+
+    currentStep = (currentStep + 1) % STEPS;
+  }
+
+  const playBtn = document.getElementById('play-btn');
+  const statusText = document.getElementById('status-text');
+
+  function startPlay() {
+    ensureAudio();
+    isPlaying = true;
+    currentStep = 0;
+    playBtn.textContent = '■ STOP';
+    playBtn.classList.add('pressed');
+    statusText.textContent = 'PLAYING';
+    tick();
+    stepInterval = setInterval(tick, stepDuration());
+  }
+  function stopPlay() {
+    isPlaying = false;
+    clearInterval(stepInterval);
+    stepInterval = null;
+    playBtn.textContent = '▶ PLAY';
+    playBtn.classList.remove('pressed');
+    statusText.textContent = 'READY';
+    stepEls.forEach(e => e.classList.remove('now'));
+    document.querySelectorAll('.cell.playing').forEach(c => c.classList.remove('playing'));
+  }
+
+  playBtn.addEventListener('click', () => {
+    if (isPlaying) stopPlay(); else startPlay();
+  });
+
+  document.getElementById('clear-btn').addEventListener('click', () => {
+    document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
+    statusText.textContent = 'CLEARED';
+    setTimeout(() => statusText.textContent = isPlaying ? 'PLAYING' : 'READY', 600);
+  });
+
+  // Wave select
+  document.querySelectorAll('.wave-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.wave-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      waveform = b.dataset.wave;
+    });
+  });
+
+  // BPM + Vol
+  const bpmInput = document.getElementById('bpm');
+  const bpmVal = document.getElementById('bpm-val');
+  bpmInput.addEventListener('input', () => {
+    bpm = parseInt(bpmInput.value);
+    bpmVal.textContent = bpm;
+    if (isPlaying) {
+      clearInterval(stepInterval);
+      stepInterval = setInterval(tick, stepDuration());
+    }
+  });
+  const volInput = document.getElementById('vol');
+  const volVal = document.getElementById('vol-val');
+  volInput.addEventListener('input', () => {
+    masterVol = parseInt(volInput.value) / 100;
+    volVal.textContent = volInput.value;
+  });
+
+  // Keyboard: spacebar toggles play, ESC exits
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+      if (isPlaying) stopPlay(); else startPlay();
+    }
+    if (e.code === 'Escape') {
+      window.location.href = '/';
+    }
+  });
+</script>
+</body>
+</html>

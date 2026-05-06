@@ -14,6 +14,7 @@ import { AboutSection } from "@/components/about-section"
 import { Hind_Madurai } from "next/font/google"
 import DigitalGuestbook from "@/digital-guestbook"
 import { MusicPlayer } from "@/components/music-player"
+import { ArcadeTrigger } from "@/components/arcade-trigger"
 import Snowfall from "react-snowfall"
 
 const hindMadurai = Hind_Madurai({
@@ -81,6 +82,7 @@ export default function Portfolio() {
         }}
       />
       <MusicPlayer />
+      <ArcadeTrigger />
 
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center px-6 py-20">
