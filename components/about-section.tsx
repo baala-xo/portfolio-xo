@@ -14,7 +14,7 @@ export function AboutSection() {
           <span className="text-primary underline decoration-dotted underline-offset-4">Zemuria Inc</span>. 😎
         </p>
         <p>
-          M.Sc. in IT, fueled by Claude Opus and the kind of energy{" "}
+         Fueled by Claude Opus and the kind of energy{" "}
           <span className="text-primary font-mono text-sm underline decoration-dotted underline-offset-4">
             Saul Goodman
           </span>{" "}

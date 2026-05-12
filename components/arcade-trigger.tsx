@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Press_Start_2P } from "next/font/google"
+import MagneticWrapper from "@/components/atomixui/magnetic-wrapper"
 
 const pressStart = Press_Start_2P({
   weight: "400",
@@ -48,6 +49,7 @@ export function ArcadeTrigger() {
         }
       `}</style>
 
+      <MagneticWrapper elasticity={0.4}>
       <motion.a
         href="/arcade"
         onMouseEnter={() => setHovered(true)}
@@ -117,6 +119,7 @@ export function ArcadeTrigger() {
           )}
         </AnimatePresence>
       </motion.a>
+      </MagneticWrapper>
     </div>
   )
 }

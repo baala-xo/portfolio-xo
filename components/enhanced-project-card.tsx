@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ExternalLink, FileText, Heart, Share2, ChevronDown, ChevronUp, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import { ExternalLink, FileText, Heart, Share2, ChevronDown, ChevronUp, Clock, CheckCircle, AlertCircle, Users } from 'lucide-react'
 
 // Inline hooks to avoid import issues
 function useMediaQuery(query: string): boolean {
@@ -67,9 +67,13 @@ interface ProjectCardProps {
   academic?: boolean
   documentationLink?: string
   thumbnailUrl?: string
+  thumbnailFit?: "cover" | "contain"
+  thumbnailBg?: "muted" | "black"
+  icon?: string
   progress?: number
   lastUpdated?: string
   isFavorite?: boolean
+  metric?: string
   onFavoriteToggle?: (id: number) => void
   onShare?: (title: string, url?: string) => void
 }
@@ -84,9 +88,13 @@ export function EnhancedProjectCard({
   academic,
   documentationLink,
   thumbnailUrl,
+  thumbnailFit = "cover",
+  thumbnailBg = "muted",
+  icon,
   progress,
   lastUpdated,
   isFavorite = false,
+  metric,
   onFavoriteToggle,
   onShare,
 }: ProjectCardProps) {
@@ -251,6 +259,16 @@ export function EnhancedProjectCard({
                         academic
                       </Badge>
                     )}
+
+                    {metric && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs flex items-center gap-1 bg-purple-500/10 text-purple-400 border-purple-500/30"
+                      >
+                        <Users className="w-3 h-3" />
+                        {metric}
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
@@ -273,11 +291,11 @@ export function EnhancedProjectCard({
 
               {/* Enhanced Thumbnail with better aspect ratio handling */}
               {thumbnailUrl && !imageError && (
-                <div className="mb-3 rounded-lg overflow-hidden bg-muted">
+                <div className={`mb-3 rounded-lg overflow-hidden ${thumbnailBg === "black" ? "bg-black" : "bg-muted"}`}>
                   <img
                     src={thumbnailUrl || "/placeholder.svg"}
                     alt={`${title} preview`}
-                    className="w-full h-32 sm:h-40 object-cover object-center"
+                    className={`w-full h-32 sm:h-40 object-center ${thumbnailFit === "contain" ? "object-contain" : "object-cover"}`}
                     loading="lazy"
                     onError={() => setImageError(true)}
                     onLoad={() => setImageError(false)}
@@ -297,32 +315,44 @@ export function EnhancedProjectCard({
                 </div>
               )}
 
-              {/* Description with expand/collapse */}
-              <div className="mb-3">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {shouldTruncateDescription && !isExpanded
-                    ? truncateText(description, maxDescriptionLength)
-                    : description
-                  }
-                </p>
-
-                {shouldTruncateDescription && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-0 h-auto text-xs text-primary hover:text-primary/80 mt-1"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setIsExpanded(!isExpanded)
-                    }}
-                  >
-                    {isExpanded ? (
-                      <>Show less <ChevronUp className="w-3 h-3 ml-1" /></>
-                    ) : (
-                      <>Show more <ChevronDown className="w-3 h-3 ml-1" /></>
-                    )}
-                  </Button>
+              {/* Description with expand/collapse — optional profile-style icon on the left */}
+              <div className={`mb-3 ${icon ? 'flex items-start gap-3' : ''}`}>
+                {icon && (
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden bg-muted ring-1 ring-border">
+                    <img
+                      src={icon}
+                      alt={`${title} icon`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 )}
+                <div className={icon ? 'flex-1 min-w-0' : ''}>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {shouldTruncateDescription && !isExpanded
+                      ? truncateText(description, maxDescriptionLength)
+                      : description
+                    }
+                  </p>
+
+                  {shouldTruncateDescription && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="p-0 h-auto text-xs text-primary hover:text-primary/80 mt-1"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsExpanded(!isExpanded)
+                      }}
+                    >
+                      {isExpanded ? (
+                        <>Show less <ChevronUp className="w-3 h-3 ml-1" /></>
+                      ) : (
+                        <>Show more <ChevronDown className="w-3 h-3 ml-1" /></>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {/* Enhanced technology tags with strong brinjal violet glow */}

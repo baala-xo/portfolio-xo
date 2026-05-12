@@ -6,5 +6,9 @@ export default defineSchema({
     author_name: v.string(),
     message: v.string(),
     likes: v.number(),
-  }), // Removed the .index() definition here
+  }),
+  signatures: defineTable({
+    signature: v.string(),
+    author_name: v.optional(v.string()),
+  }),
 });
