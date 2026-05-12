@@ -4,6 +4,10 @@
 
 @layer base {
   :root {
+    /* Track-driven accent — overridden inline on <html> by MusicPlayer when
+     * the song changes. Anything that wants to theme per-track should consume
+     * `var(--accent)` (and color-mix to derive tints / transparent shades). */
+    --accent: #8a2be2;
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -84,35 +88,38 @@
   }
 }
 
-/* Identity Card Brinjal Violet Glow */
+/* Identity Card accent glow — driven by --accent so it shifts per track */
 .identity-card-glow {
   border: 2px solid transparent;
   background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-    linear-gradient(135deg, #8a2be2, #9932cc, #8a2be2) border-box;
-  box-shadow: 0 0 20px rgba(138, 43, 226, 0.3), 0 0 40px rgba(138, 43, 226, 0.1);
-  transition: all 0.5s ease;
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white), var(--accent)) border-box;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent),
+    0 0 40px color-mix(in srgb, var(--accent) 10%, transparent);
+  transition: background 0.6s ease, box-shadow 0.6s ease, border-color 0.6s ease;
 }
 
 /* Mobile ID Card Glow Animation */
 @keyframes mobile-id-card-glow {
   0% {
     border-color: transparent;
-    box-shadow: 0 0 0px rgba(138, 43, 226, 0);
+    box-shadow: 0 0 0px color-mix(in srgb, var(--accent) 0%, transparent);
   }
 
   25% {
-    border-color: rgba(138, 43, 226, 0.5);
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.2), 0 0 30px rgba(138, 43, 226, 0.05);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 0 30px color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
   75% {
-    border-color: rgba(138, 43, 226, 0.5);
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.2), 0 0 30px rgba(138, 43, 226, 0.05);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 0 30px color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
   100% {
     border-color: transparent;
-    box-shadow: 0 0 0px rgba(138, 43, 226, 0);
+    box-shadow: 0 0 0px color-mix(in srgb, var(--accent) 0%, transparent);
   }
 }
 
@@ -126,9 +133,10 @@
   border: 1px solid transparent;
   /* Adjusted for badge */
   background: linear-gradient(hsl(var(--muted)), hsl(var(--muted))) padding-box,
-    linear-gradient(135deg, #8a2be2, #9932cc, #8a2be2) border-box;
-  box-shadow: 0 0 10px rgba(138, 43, 226, 0.2), 0 0 20px rgba(138, 43, 226, 0.05);
-  transition: all 0.5s ease;
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white), var(--accent)) border-box;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent) 5%, transparent);
+  transition: background 0.6s ease, box-shadow 0.6s ease;
 }
 
 /* Project link glow */
@@ -150,8 +158,9 @@
 
 .project-link-glow.active-link-glow {
   background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-    linear-gradient(135deg, #8a2be2, #9932cc, #8a2be2) border-box;
-  box-shadow: 0 0 10px rgba(138, 43, 226, 0.2), 0 0 20px rgba(138, 43, 226, 0.05);
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white), var(--accent)) border-box;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent) 5%, transparent);
 }
 
 /* Navigation item glow */
@@ -171,8 +180,9 @@
 
 .nav-item-glow.active-nav-glow {
   background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-    linear-gradient(135deg, #8a2be2, #9932cc, #8a2be2) border-box;
-  box-shadow: 0 0 10px rgba(138, 43, 226, 0.2), 0 0 20px rgba(138, 43, 226, 0.05);
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white), var(--accent)) border-box;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent) 5%, transparent);
 }
 
 /* Glassmorphic bottom navigation */
@@ -303,12 +313,9 @@ input:focus-visible {
 }
 
 ::selection {
-  background-color: #8A2BE2;
-  /* Brinjal Violet */
+  background-color: var(--accent);
   color: #FFFFFF;
-  /* White text */
-  text-shadow: 0 0 5px #FFFFFF, 0 0 10px #8A2BE2;
-  /* White and Violet Glow */
+  text-shadow: 0 0 5px #FFFFFF, 0 0 10px var(--accent);
 }
 
 
@@ -319,8 +326,7 @@ input:focus-visible {
 /* --- Custom Caret Color --- */
 input,
 textarea {
-  caret-color: #8A2BE2;
-  /* Your brinjal violet color */
+  caret-color: var(--accent);
 }
 
 html {

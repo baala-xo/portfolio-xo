@@ -12,9 +12,13 @@ import { Footer } from "@/components/footer"
 import { BottomNavigation } from "@/components/bottom-navigation"
 import { AboutSection } from "@/components/about-section"
 import { Hind_Madurai } from "next/font/google"
-import DigitalGuestbook from "@/digital-guestbook"
+import { SignatureWall } from "@/components/signature-wall"
 import { MusicPlayer } from "@/components/music-player"
+import { MusicIntroPopup } from "@/components/music-intro-popup"
 import { ArcadeTrigger } from "@/components/arcade-trigger"
+import { DudeHandMoment } from "@/components/dude-hand-moment"
+import MagneticWrapper from "@/components/atomixui/magnetic-wrapper"
+import { useMusicAccent } from "@/hooks/use-music-accent"
 import Snowfall from "react-snowfall"
 
 const hindMadurai = Hind_Madurai({
@@ -65,13 +69,14 @@ const projectStagger = {
 }
 
 export default function Portfolio() {
-  // Honest mode removed
+  // Snowfall takes its drift color from whichever track is currently active.
+  const accent = useMusicAccent("#8a2be2")
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      {/* Ambient Snowfall */}
+      {/* Ambient Snowfall — colour tracks the music accent */}
       <Snowfall
-        color="#72e93bff"
+        color={accent}
         snowflakeCount={8}
         style={{
           position: 'fixed',
@@ -82,7 +87,9 @@ export default function Portfolio() {
         }}
       />
       <MusicPlayer />
+      <MusicIntroPopup />
       <ArcadeTrigger />
+      <DudeHandMoment />
 
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center px-6 py-20">
@@ -115,7 +122,11 @@ export default function Portfolio() {
               animate="animate"
               variants={heroFromBottom}
             >
-              <IdentityCard />
+              <MagneticWrapper elasticity={0.5}>
+                <div>
+                  <IdentityCard />
+                </div>
+              </MagneticWrapper>
               <div className="w-full max-w-[520px]">
                 <GithubActivityBadge username="baala-xo" />
               </div>
@@ -143,6 +154,36 @@ export default function Portfolio() {
         >
           <SkillsSection />
         </motion.div>
+
+        {/* Products Section - team work shipping in production */}
+        <motion.section
+          id="products"
+          className="space-y-8"
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: "-50px", amount: 0.2 }}
+          variants={projectStagger}
+        >
+          <motion.h2 className="text-2xl font-bold" variants={smoothScrollFade}>
+            Products I&apos;m part of
+          </motion.h2>
+          <motion.div className="space-y-6">
+            <motion.div variants={smoothScrollFade}>
+              <EnhancedProjectCard
+                number={1}
+                title="mysamantha.ai"
+                description="Your second brain, but it's an AI. Notes, tasks, journals, and inbox automation in one place. I'm part of the engineering team. mostly UI on the Next.js web app and Android client, with backend cameos when the situation calls for it."
+                technologies={["Next.js", "React", "TypeScript", "TailwindCSS", "Android"]}
+                link="https://mysamantha.ai"
+                status="building"
+                metric="Used by 3,500+ humans"
+                thumbnailUrl="/products/mysamantha-hero.avif"
+                thumbnailFit="contain"
+                thumbnailBg="black"
+              />
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
         {/* Projects Section - Enhanced with all new features */}
         <motion.section
@@ -183,18 +224,6 @@ export default function Portfolio() {
                 lastUpdated="1 week ago"
               />
             </motion.div>
-            <motion.div variants={smoothScrollFade}>
-              <EnhancedProjectCard
-                number={4}
-                title="AI Chatbot Widget"
-                description="Built a floating chatbot widget with persistent memory and smart LLM responses. Integrated via a reusable component with customizable themes and advanced conversation management."
-                technologies={["NextJS", "MistralAI-model", "Redis Upstash", "TailwindCSS", "Vercel"]}
-                link="https://ai-chatbot-widget-5ga9cof84-baalaxos-projects.vercel.app/"
-                status="completed"
-                thumbnailUrl="/projects/ai-chatbot-widget.png"
-                lastUpdated="3 months ago"
-              />
-            </motion.div>
           </motion.div>
         </motion.section>
 
@@ -213,7 +242,7 @@ export default function Portfolio() {
           viewport={{ once: true, margin: "-50px", amount: 0.2 }}
           variants={smoothScrollFade}
         >
-          <DigitalGuestbook />
+          <SignatureWall />
         </motion.div>
       </div>
 
